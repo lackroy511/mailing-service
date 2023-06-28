@@ -75,4 +75,5 @@ class MailingLogs(models.Model):
 
     class Meta:
         verbose_name = 'Логи'
+        verbose_name_plural = 'Логи'
         ordering = ('last_try_date', )
