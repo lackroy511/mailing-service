@@ -1,0 +1,52 @@
+.text-title {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    color: rgb(207, 215, 222);
+}
+
+.card.user {
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #3d444d;
+    color: rgb(224, 233, 240);
+}
+
+.form-control {
+    background-color: #a1a6aa;
+    
+}
+
+.card.table {
+    padding: 1rem;
+    max-width: 60rem;
+    background-color: #3d444d;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn.btn-outline-primary {
+    padding: 0rem;
+    border-color: rgb(146, 147, 156);
+    
+}
+
+.user-action {
+    text-decoration: none;
+    display: block;
+    margin: 0;
+    padding: 0.2rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    color: #a1a6aa;
+
+}
+
+.btn.btn-outline-primary:hover {
+    background-color: #0D6EFD; 
+}
+
+.user-action:hover {
+    color: #eef3fa;
+}

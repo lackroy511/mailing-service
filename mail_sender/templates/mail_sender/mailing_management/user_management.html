@@ -1,0 +1,94 @@
+{% extends 'mail_sender/base.html' %}
+
+
+{% block content %}
+
+<div class="row title">
+    <div class="text-title">
+        <h1>Создать пользователя</h1>
+    </div>
+</div>
+
+<div class="row main">
+    <div class="col form">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="card user">
+                <div class="m-2">
+                    <label class="form-label">Имя</label>
+                    <input class="form-control" type="text" placeholder="Иван" aria-label="default input example"
+                        name="first_name" required>
+                    <label class="form-label">Фамилия</label>
+                    <input class="form-control" type="text" placeholder="Иванов" aria-label="default input example"
+                        name="last_name" required>
+                    <label class="form-label">Отчество</label>
+                    <input class="form-control" type="text" placeholder="Иванович" aria-label="default input example"
+                        name="surname" required>
+                </div>
+
+                <div class="m-2">
+                    <label for="exampleFormControlInput1" class="form-label">Почта</label>
+                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@mail.com"
+                        name="email" required>
+                </div>
+                <div class="m-2">
+                    <label for="exampleFormControlTextarea1" class="form-label">Комментарий</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="comment"></textarea>
+                </div>
+                <div class="m-2">
+                    <input class="btn btn-primary" type="submit" value="Создать" />
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="row title">
+    <div class="text-title">
+        <h2>Список пользователей</h1>
+    </div>
+</div>
+
+<div class="row mb-0 table">
+    <div class="col table">
+        <div class="card table">
+            <table class="table mb-0 table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Полное имя</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_list %}
+                    <tr>
+                        <th scope="row">{{ user.pk }}</th>
+                        <td>{{ user.first_name }} {{ user.last_name }} {{ user.surname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                                <button type="button" class="btn btn-outline-primary">
+                                    <a class="user-action" href={% url 'mail_sender:edit_user' user.pk %}>Ред.</a>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary">
+                                    <a class="user-action" href={% url 'mail_sender:del_user' user.pk %}>Удалить</a>
+                                </button>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
