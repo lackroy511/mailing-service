@@ -1,0 +1,120 @@
+{% extends 'mail_sender/base.html' %}
+
+{% block content %}
+
+<div class="row title">
+    <div class="text-title">
+        <h2>Создать рассылку</h1>
+    </div>
+</div>
+
+<div class="row main">
+    <div class="col form">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="card massage">
+                <div class="m-2">
+                    <label class="form-label">Тема сообщения</label>
+                    <input class="form-control mb-2" type="text" placeholder="Тема" aria-label="default input example"
+                        name="massage_subject" required maxlength="250">
+                    <div class="mb-2">
+                        <label for="exampleFormControlTextarea1" class="form-label">Текст</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="massage_text"
+                            required>{{ comment }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="periodicity-title">Введите периодичность рассылки:</h4>
+                            <p periodicity-link>Проверить периодичность можно <a class="periodicity-link"
+                                    href="https://crontab.guru/#*_*_*_*_*" target="_blank">по этой ссылке.</a></p>
+                        </div>
+                    </div>
+                    <div class="row time">
+                        <div class="col time l">
+                            <label for="formGroupExampleInput" class="form-label">Минуты</label>
+                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
+                                name="minute" required maxlength="5">
+                        </div>
+
+                        <div class="col time">
+                            <label for="formGroupExampleInput" class="form-label">Часы</label>
+                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
+                                name="hour" required maxlength="5">
+                        </div>
+
+                        <div class="col time">
+                            <label for="formGroupExampleInput" class="form-label">День мес.</label>
+                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
+                                name="day_month" required maxlength="5">
+                        </div>
+
+                        <div class="col time">
+                            <label for="formGroupExampleInput" class="form-label">Месяц</label>
+                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
+                                name="month" required maxlength="5">
+                        </div>
+
+                        <div class="col time r">
+                            <label for="formGroupExampleInput" class="form-label">День нед.</label>
+                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
+                                name="day_week" required maxlength="5">
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <input class="btn btn-primary" type="submit" value="Создать" />
+                    </div>
+
+                </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="row title">
+    <div class="text-title">
+        <h2>Список рассылок</h1>
+    </div>
+</div>
+
+<div class="row mb-0 table">
+    <div class="col table">
+        <div class="card table">
+            <table class="table mb-0 table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Тема</th>
+                        <th scope="col">Периодичность</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mailing in mailing_list %}
+                    <tr>
+                        <th scope="row">{{ mailing.pk }}</th>
+                        <td>{{ mailing.massage_subject }}</td>
+                        <td>{{ mailing.mailing_settings.mailing_periodicity }}</td>
+                        <td>{{ mailing.mailing_settings.mailing_status }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                                <button type="button" class="btn btn-outline-primary">
+                                    <a class="user-action" href={% url 'mail_sender:edit_mailing' mailing.pk %}>Ред.</a>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary">
+                                    <a class="user-action" href={% url 'mail_sender:del_mailing' mailing.pk %}>Удалить</a>
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

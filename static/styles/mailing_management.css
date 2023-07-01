@@ -1,0 +1,42 @@
+.card.massage {
+    max-width: 30.7rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #3d444d;
+    color: rgb(224, 233, 240);
+}
+
+.col.time {
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.col.time>.form-control {
+    width: 5rem;
+}
+
+.periodicity-title {
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+
+.periodicity-link {
+    text-decoration: none;
+    color: rgb(150, 150, 228);
+    
+}
+
+.col.time.l {
+    margin-left: 0.3rem;
+}
+
+.col.time.r {
+    margin-right: 0.3rem;
+}
+
+
+/* @media (max-width: 750px) {
+    .card.massage {
+        width: 29rem;
+    }
+} */

@@ -45,9 +45,8 @@ class MailingSettings(models.Model):
     """
     Представление настроек рассылки в базе данных.
     """
-    mailing_time = models.CharField(max_length=100, verbose_name='время')
-    mailing_periodicity = models.CharField(max_length=10, verbose_name='периодичность')
-    mailing_status = models.CharField(max_length=10, verbose_name='cтатус')
+    mailing_periodicity = models.CharField(max_length=40, verbose_name='периодичность')
+    mailing_status = models.CharField(max_length=10, verbose_name='cтатус', default='Создана')
 
     def __str__(self) -> str:
         return f'Время: {self.mailing_time}, \

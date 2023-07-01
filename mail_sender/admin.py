@@ -13,7 +13,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 @admin.register(MassageToSend)
-class ClientAdmin(admin.ModelAdmin):
+class MassageToSendAdmin(admin.ModelAdmin):
     """
     Настройки админки для сообщения для отправки.
     """
@@ -21,15 +21,15 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 @admin.register(MailingSettings)
-class ClientAdmin(admin.ModelAdmin):
+class MailingSettingsAdmin(admin.ModelAdmin):
     """
     Настройки админки для настроек рассылки.
     """
-    list_display = ('mailing_time', 'mailing_periodicity', 'mailing_status', )
+    list_display = ('mailing_periodicity', 'mailing_status', )
 
 
 @admin.register(MailingLogs)
-class ClientAdmin(admin.ModelAdmin):
+class MailingLogsAdmin(admin.ModelAdmin):
     """
     Настройки админки для логов рассылки.
     """
