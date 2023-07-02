@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.core.paginator import Paginator, EmptyPage
 from mail_sender.models import Client, MassageToSend, MailingSettings
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -22,11 +22,14 @@ def user_management(request):
     """
     Управление пользователями
     """
-
     users_list = Client.objects.all()
 
+    paginator  = Paginator(users_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     context = {
-        'users_list': users_list
+        'users_list': page_obj
     }
 
     if request.method == 'POST':
@@ -101,9 +104,13 @@ def mailing_management(request):
         )
 
     mailing_list = MassageToSend.objects.all()
+    
+    paginator  = Paginator(mailing_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
-        'mailing_list': mailing_list
+        'mailing_list': page_obj
     }
     return render(request, 'mail_sender/mailing_management/mailing_management.html', context=context)
 

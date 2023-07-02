@@ -24,6 +24,7 @@
     background-color: #3d444d;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 0;
 }
 
 .btn.btn-outline-primary {
@@ -48,5 +49,39 @@
 }
 
 .user-action:hover {
+    color: #eef3fa;
+}
+
+.paginator {
+    display: flex;
+    width: 15.7rem;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+
+.page-link {
+    background-color: #a1a6aa;
+    border-color: #a1a6aa;
+    color: #3d444d;
+}
+
+.page-link:hover {
+    background-color: #0D6EFD;
+    color: #eef3fa;
+    
+}
+
+.page-item.disabled>.page-link {
+    background-color: #a1a6aa;
+    border-color: #a1a6aa;
+}
+
+.page-link.current {
+    background-color: #828689;
+}
+
+.page-link.current:hover {
+    background-color: #0D6EFD;
     color: #eef3fa;
 }
