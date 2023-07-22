@@ -23,53 +23,6 @@
                         
                     </div>
 
-                    {% comment %} <label class="form-label">Название рассылки</label>
-                    <input class="form-control mb-2" type="text" placeholder="Название" aria-label="default input example"
-                        name="massage_subject" required maxlength="250">
-                    <div class="mb-2">
-                        <label for="exampleFormControlTextarea1" class="form-label">Текст</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="massage_text"
-                            required>{{ comment }}</textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <h4 class="periodicity-title">Введите периодичность рассылки:</h4>
-                            <p periodicity-link>Проверить ввод можно <a class="periodicity-link"
-                                    href="https://crontab.guru/#*_*_*_*_*" target="_blank">по этой ссылке.</a></p>
-                        </div>
-                    </div>
-                    <div class="row time">
-                        <div class="col time l">
-                            <label for="formGroupExampleInput" class="form-label">Минуты</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
-                                name="minute" required maxlength="5">
-                        </div>
-
-                        <div class="col time">
-                            <label for="formGroupExampleInput" class="form-label">Часы</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
-                                name="hour" required maxlength="5">
-                        </div>
-
-                        <div class="col time">
-                            <label for="formGroupExampleInput" class="form-label">День мес.</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
-                                name="day_month" required maxlength="5">
-                        </div>
-
-                        <div class="col time">
-                            <label for="formGroupExampleInput" class="form-label">Месяц</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
-                                name="month" required maxlength="5">
-                        </div>
-
-                        <div class="col time r">
-                            <label for="formGroupExampleInput" class="form-label">День нед.</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
-                                name="day_week" required maxlength="5">
-                        </div>
-                    </div>{% endcomment %}
-
                     <div class="">
                         <input class="btn btn-primary" type="submit" value="Создать" />
                     </div> 
@@ -104,7 +57,7 @@
                     <tr>
                         <th scope="row">{{ mailing.pk }}</th>
                         <td>{{ mailing.massage_subject }}</td>
-                        <td>{{ mailing.mailing_settings.mailing_periodicity }}</td>
+                        <td>{{ mailing.mailing_settings_set.mailing_periodicity }}</td>
                         <td>{{ mailing.mailing_settings.mailing_status }}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">

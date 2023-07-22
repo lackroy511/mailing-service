@@ -1,8 +1,10 @@
+from typing import Any
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -97,6 +99,14 @@ class MailingManagementCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form_settings"] = MailingSettingsForm
+        
+        mailing_list = Mailing.objects.all()
+        paginator  = Paginator(mailing_list, 5)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['mailing_list'] = page_obj
+        
         return context
     
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
@@ -109,6 +119,8 @@ class MailingManagementCreateView(CreateView):
             mailing_settings.save()
         
         return super().form_valid(form)
+
+    
     
 
 
