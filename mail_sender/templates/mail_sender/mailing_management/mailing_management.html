@@ -12,11 +12,14 @@
     <div class="col form">
 
         <form method="post">
-            {% csrf_token %}
+            
             <div class="card massage">
                 <div class="m-2">
-                    <label class="form-label">Тема сообщения</label>
-                    <input class="form-control mb-2" type="text" placeholder="Тема" aria-label="default input example"
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    {% comment %} <label class="form-label">Название рассылки</label>
+                    <input class="form-control mb-2" type="text" placeholder="Название" aria-label="default input example"
                         name="massage_subject" required maxlength="250">
                     <div class="mb-2">
                         <label for="exampleFormControlTextarea1" class="form-label">Текст</label>
@@ -64,7 +67,7 @@
 
                     <div class="">
                         <input class="btn btn-primary" type="submit" value="Создать" />
-                    </div>
+                    </div> {% endcomment %}
 
                 </div>
         </form>
@@ -125,8 +128,12 @@
                 <ul class="pagination">
                     
                     {% if mailing_list.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page={{ mailing_list.previous_page_number }}">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="?page={{ mailing_list.previous_page_number }}">{{ mailing_list.previous_page_number }}</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">Previous</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">{{ mailing_list.previous_page_number }}</a>
+                        </li>
                     {% else %}
                         <li class="page-item disabled"><a class="page-link">Previous</a></li>
                         <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
@@ -135,7 +142,9 @@
                     <li class="page-item"><a class="page-link current" href="?page={{ mailing_list.number }}">{{ mailing_list.number }}</a></li>
                     
                     {% if mailing_list.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ mailing_list.next_page_number }}">{{ mailing_list.next_page_number }}</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ mailing_list.next_page_number }}">{{ mailing_list.next_page_number }}</a>
+                        </li>
                         <li class="page-item"><a class="page-link" href="?page={{ mailing_list.next_page_number }}">Next</a></li>
                     {% else %}
                         <li class="page-item disabled"><a class="page-link" href="#">...</a></li>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage
-from mail_sender.models import Client, MassageToSend, MailingSettings
+from mail_sender.models import Client, Mailing, MailingSettings
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -97,13 +97,13 @@ def mailing_management(request):
                                 f"{request.POST.get('day_week')}",
         )
 
-        MassageToSend.objects.create(
+        Mailing.objects.create(
             massage_subject=request.POST.get('massage_subject'),
             massage_text=request.POST.get('massage_text'),
             mailing_settings=MailingSettings.objects.latest('pk')
         )
 
-    mailing_list = MassageToSend.objects.all()
+    mailing_list = Mailing.objects.all()
     
     paginator  = Paginator(mailing_list, 5)
     page_number = request.GET.get('page')
@@ -120,7 +120,7 @@ def del_mailing(request, pk):
     Управление рассылкой: Удаление рассылки.
     '''
     try:
-        massage = MassageToSend.objects.get(pk=pk)
+        massage = Mailing.objects.get(pk=pk)
         MailingSettings.objects.get(pk=massage.mailing_settings.pk).delete()
         massage.delete()
     except ObjectDoesNotExist:
@@ -132,7 +132,7 @@ def edit_mailing(request, pk):
     '''
     Управление рассылкой: Редактирование рассылки.
     '''
-    mailing = MassageToSend.objects.get(pk=pk)
+    mailing = Mailing.objects.get(pk=pk)
     settings = MailingSettings.objects.get(pk=mailing.mailing_settings.pk)
 
     periodicity: str = mailing.mailing_settings.mailing_periodicity

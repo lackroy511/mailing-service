@@ -10,6 +10,9 @@ packages = [{include = "coursework_6"}]
 python = "^3.11"
 django = "^4.2.2"
 psycopg2 = "^2.9.6"
+redis = "^4.6.0"
+django-crontab = "^0.7.1"
+python-dotenv = "^1.0.0"
 
 
 [build-system]
