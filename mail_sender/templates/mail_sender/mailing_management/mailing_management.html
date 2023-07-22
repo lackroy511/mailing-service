@@ -15,8 +15,13 @@
             
             <div class="card massage">
                 <div class="m-2">
-                    {% csrf_token %}
-                    {{ form.as_p }}
+                    
+                    <div class="cs-form">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        {{ form_settings.as_p }}
+                        
+                    </div>
 
                     {% comment %} <label class="form-label">Название рассылки</label>
                     <input class="form-control mb-2" type="text" placeholder="Название" aria-label="default input example"
@@ -63,11 +68,11 @@
                             <input type="text" class="form-control" id="formGroupExampleInput" placeholder="*" value="*"
                                 name="day_week" required maxlength="5">
                         </div>
-                    </div>
+                    </div>{% endcomment %}
 
                     <div class="">
                         <input class="btn btn-primary" type="submit" value="Создать" />
-                    </div> {% endcomment %}
+                    </div> 
 
                 </div>
         </form>

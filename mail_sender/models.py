@@ -28,8 +28,7 @@ class Mailing(models.Model):
     """
     Представление сообщения в базе данных.
     """
-    massage_subject = models.CharField(
-        max_length=250, verbose_name='тема сообщения')
+    massage_subject = models.CharField(max_length=250, verbose_name='тема сообщения')
     massage_text = models.TextField(verbose_name='текст сообщения')
 
     def __str__(self) -> str:
@@ -44,15 +43,19 @@ class MailingSettings(models.Model):
     """
     Представление настроек рассылки в базе данных.
     """
-    mailing_time = models.TimeField(
-        auto_now=False, auto_now_add=False, verbose_name='время рассылки', **NULLABLE)
-    mailing_periodicity = models.CharField(
-        max_length=40, verbose_name='периодичность')
-    mailing_status = models.CharField(
-        max_length=10, verbose_name='cтатус', default='Создана')
+    
+    MAILING_PERIODICITY_CHOICES = (
+        ('M H */1 * *', 'Раз в день'),
+        ('M H * * 1', 'Раз в неделю'),
+        ('M H * */1 *', 'Раз в месяц'),
+    )
+    
+    mailing_time = models.TimeField(auto_now=False, auto_now_add=False, verbose_name='время рассылки')
+    mailing_periodicity = models.CharField(max_length=40, verbose_name='периодичность', choices=MAILING_PERIODICITY_CHOICES)
+    mailing_status = models.CharField(max_length=10, verbose_name='cтатус', default='Создана')
 
     mailing = models.ForeignKey(
-        Mailing, on_delete=models.CASCADE, verbose_name='рассылка', **NULLABLE)
+        Mailing, on_delete=models.CASCADE, verbose_name='рассылка')
 
     def __str__(self) -> str:
         return f'Время: {self.mailing_time}, \
@@ -70,14 +73,11 @@ class MailingLogs(models.Model):
     Представление логов рассылки в базе данных.
     """
 
-    last_try_date = models.DateTimeField(
-        auto_now=True, verbose_name='дата и время попытки')
+    last_try_date = models.DateTimeField(auto_now=True, verbose_name='дата и время попытки')
     try_status = models.CharField(max_length=10, verbose_name='статус попытки')
-    server_response = models.CharField(
-        max_length=250, verbose_name='ответ сервера')
+    server_response = models.CharField(max_length=250, verbose_name='ответ сервера')
 
-    mailing = models.ForeignKey(
-        Mailing, on_delete=models.CASCADE, verbose_name='рассылка', **NULLABLE)
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='рассылка')
 
     def __str__(self) -> str:
         return f'Дата попытки: {self.last_try_date}, Статус: {self.try_status}, Ответ сервера: {self.server_response}'

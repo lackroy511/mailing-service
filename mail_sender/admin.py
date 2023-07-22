@@ -25,7 +25,7 @@ class MailingSettingsAdmin(admin.ModelAdmin):
     """
     Настройки админки для настроек рассылки.
     """
-    list_display = ('mailing_periodicity', 'mailing_status', 'mailing')
+    list_display = ('mailing', 'mailing_periodicity', 'mailing_status', )
 
 
 @admin.register(MailingLogs)
@@ -33,4 +33,4 @@ class MailingLogsAdmin(admin.ModelAdmin):
     """
     Настройки админки для логов рассылки.
     """
-    list_display = ('last_try_date', 'try_status', 'mailing')
+    list_display = ('last_try_date', 'try_status', 'mailing', )

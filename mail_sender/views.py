@@ -1,8 +1,13 @@
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage
-from mail_sender.models import Client, Mailing, MailingSettings
-
 from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+from mail_sender.models import Client, Mailing, MailingSettings
+from mail_sender.forms import MailingForm, MailingSettingsForm
 
 # Create your views here.
 
@@ -83,36 +88,60 @@ def edit_user(request, pk):
     return render(request, 'mail_sender/mailing_management/edit_user.html', context=context)
 
 
-def mailing_management(request):
-    '''
-    Управление рассылкой.
-    '''
-    if request.method == 'POST':
-
-        MailingSettings.objects.create(
-            mailing_periodicity=f"{request.POST.get('minute')} "
-                                f"{request.POST.get('hour')} "
-                                f"{request.POST.get('day_month')} "
-                                f"{request.POST.get('month')} "
-                                f"{request.POST.get('day_week')}",
-        )
-
-        Mailing.objects.create(
-            massage_subject=request.POST.get('massage_subject'),
-            massage_text=request.POST.get('massage_text'),
-            mailing_settings=MailingSettings.objects.latest('pk')
-        )
-
-    mailing_list = Mailing.objects.all()
+class MailingManagementCreateView(CreateView):
+    model = Mailing
+    form_class = MailingForm
+    success_url = reverse_lazy('mail_sender:mailing_management')
+    template_name ='mail_sender/mailing_management/mailing_management.html'
     
-    paginator  = Paginator(mailing_list, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_settings"] = MailingSettingsForm
+        return context
+    
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        mailing = form.save()
+        
+        form_settings = MailingSettingsForm(self.request.POST)
+        if form_settings.is_valid():
+            mailing_settings = form_settings.save(commit=False)
+            mailing_settings.mailing = mailing
+            mailing_settings.save()
+        
+        return super().form_valid(form)
+    
 
-    context = {
-        'mailing_list': page_obj
-    }
-    return render(request, 'mail_sender/mailing_management/mailing_management.html', context=context)
+
+# def mailing_management(request):
+#     '''
+#     Управление рассылкой.
+#     '''
+#     if request.method == 'POST':
+#         form = CombinedMailingForm(request.POST)
+#         if form.is_valid():
+#             mailing = form.cleaned_data.get('mailing')
+#             print(mailing)
+#             new_mailing = mailing.save()
+            
+#             mailing_settings = form.cleaned_data.get('mailing_settings')
+#             new_mailing_settings = mailing_settings.save(commit=False)
+#             new_mailing_settings.mailing = new_mailing
+#             new_mailing_settings.save()
+        
+#     else:
+#         form = CombinedMailingForm()
+    
+#     mailing_list = Mailing.objects.all()
+    
+#     paginator  = Paginator(mailing_list, 5)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         'mailing_list': page_obj,
+#         'form': form
+#     }
+#     return render(request, 'mail_sender/mailing_management/mailing_management.html', context=context)
 
 
 def del_mailing(request, pk):
