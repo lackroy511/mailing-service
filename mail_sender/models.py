@@ -50,12 +50,17 @@ class MailingSettings(models.Model):
         ('M H * */1 *', 'Раз в месяц'),
     )
     
+    MAILING_STATUS_CHOICES = (
+        ('Создана', 'Создана'),
+        ('отправляется', 'Отправляется'),
+        ('отправлена', 'Отправлена'),
+    )
+    
     mailing_time = models.TimeField(auto_now=False, auto_now_add=False, verbose_name='время рассылки')
     mailing_periodicity = models.CharField(max_length=40, verbose_name='периодичность', choices=MAILING_PERIODICITY_CHOICES)
-    mailing_status = models.CharField(max_length=10, verbose_name='cтатус', default='Создана')
+    mailing_status = models.CharField(max_length=20, verbose_name='cтатус', default='Создана', choices=MAILING_STATUS_CHOICES)
 
-    mailing = models.ForeignKey(
-        Mailing, on_delete=models.CASCADE, verbose_name='рассылка')
+    mailing = models.OneToOneField(Mailing, verbose_name='рассылка', on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f'Время: {self.mailing_time}, \

@@ -10,7 +10,7 @@ from mail_sender.models import Mailing, MailingSettings
 class MailingForm(forms.ModelForm):
     
     massage_subject = forms.CharField(label='Тема', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    massage_text = forms.CharField(label='Текст', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 10}))
+    massage_text = forms.CharField(label='Текст', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
     
     class Meta:
         model = Mailing

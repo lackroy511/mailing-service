@@ -91,6 +91,10 @@ def edit_user(request, pk):
 
 
 class MailingManagementCreateView(CreateView):
+    '''
+    Управление рассылкой: Создание рассылки.
+    '''
+    
     model = Mailing
     form_class = MailingForm
     success_url = reverse_lazy('mail_sender:mailing_management')
@@ -116,44 +120,20 @@ class MailingManagementCreateView(CreateView):
         if form_settings.is_valid():
             mailing_settings = form_settings.save(commit=False)
             mailing_settings.mailing = mailing
+            
+            time = mailing_settings.mailing_time
+            periodicity = mailing_settings.mailing_periodicity
+            
+            formatted_time = time.strftime('%M:%H')
+            formatted_time = formatted_time.split(':')
+            
+            periodicity = periodicity.replace('M', formatted_time[1])
+            periodicity = periodicity.replace('H', formatted_time[0])
+            
+            mailing_settings.mailing_periodicity = periodicity
             mailing_settings.save()
         
         return super().form_valid(form)
-
-    
-    
-
-
-# def mailing_management(request):
-#     '''
-#     Управление рассылкой.
-#     '''
-#     if request.method == 'POST':
-#         form = CombinedMailingForm(request.POST)
-#         if form.is_valid():
-#             mailing = form.cleaned_data.get('mailing')
-#             print(mailing)
-#             new_mailing = mailing.save()
-            
-#             mailing_settings = form.cleaned_data.get('mailing_settings')
-#             new_mailing_settings = mailing_settings.save(commit=False)
-#             new_mailing_settings.mailing = new_mailing
-#             new_mailing_settings.save()
-        
-#     else:
-#         form = CombinedMailingForm()
-    
-#     mailing_list = Mailing.objects.all()
-    
-#     paginator  = Paginator(mailing_list, 5)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-
-#     context = {
-#         'mailing_list': page_obj,
-#         'form': form
-#     }
-#     return render(request, 'mail_sender/mailing_management/mailing_management.html', context=context)
 
 
 def del_mailing(request, pk):
@@ -162,11 +142,10 @@ def del_mailing(request, pk):
     '''
     try:
         massage = Mailing.objects.get(pk=pk)
-        MailingSettings.objects.get(pk=massage.mailing_settings.pk).delete()
         massage.delete()
     except ObjectDoesNotExist:
-        return redirect('http://127.0.0.1:8000/mailing_management/')
-    return redirect('http://127.0.0.1:8000/mailing_management/')
+        return redirect('mail_sender:mailing_management')
+    return redirect('mail_sender:mailing_management')
 
 
 def edit_mailing(request, pk):
@@ -174,9 +153,9 @@ def edit_mailing(request, pk):
     Управление рассылкой: Редактирование рассылки.
     '''
     mailing = Mailing.objects.get(pk=pk)
-    settings = MailingSettings.objects.get(pk=mailing.mailing_settings.pk)
+    settings = MailingSettings.objects.get(pk=mailing.mailingsettings.pk)
 
-    periodicity: str = mailing.mailing_settings.mailing_periodicity
+    periodicity: str = mailing.mailingsettings.mailing_periodicity
     periodicity = periodicity.split(' ')
 
     context = {
