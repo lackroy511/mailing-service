@@ -22,7 +22,7 @@ def index(request):
     return render(request, 'mailing_management/index.html', context=context)
 
 
-class MailingManagementCreateView(CreateView):
+class MailingCreateView(CreateView):
     '''
     Управление рассылкой: Создание рассылки.
     '''
@@ -66,7 +66,7 @@ class MailingManagementCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingManagementUpdateView(UpdateView):
+class MailingUpdateView(UpdateView):
     '''
     Управление рассылкой: Создание рассылки.
     '''

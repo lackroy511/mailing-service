@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_crontab',
 
     'mailing_management',
+    'client_management',
 ]
 
 MIDDLEWARE = [

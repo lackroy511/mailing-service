@@ -125,21 +125,6 @@ files = [
 flake8 = ">=2"
 
 [[package]]
-name = "flake8-multiline-containers"
-version = "0.0.19"
-description = "Ensure a consistent format for multiline containers."
-optional = false
-python-versions = "*"
-files = [
-    {file = "flake8-multiline-containers-0.0.19.tar.gz", hash = "sha256:7c47527f1a2b0a991b876e58a2758e0ecc6b2d10a5fd4ee7740d042722f2f281"},
-    {file = "flake8_multiline_containers-0.0.19-py3-none-any.whl", hash = "sha256:1b684da84b401f42f1ad36f0f90e24b7f49b2691458cb582911fb99d871bb0b2"},
-]
-
-[package.dependencies]
-attrs = ">=19.3.0"
-flake8 = ">=3.7.9"
-
-[[package]]
 name = "mccabe"
 version = "0.7.0"
 description = "McCabe checker, plugin for flake8"
@@ -270,4 +255,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "472c52e59169447c2743776cd63f772da9ae4b6efee8783c4003d96ba1de106b"
+content-hash = "03d15646260a9e83d61453c3c967137e67330146dfcdc0d53d4e38f58fe3d166"
