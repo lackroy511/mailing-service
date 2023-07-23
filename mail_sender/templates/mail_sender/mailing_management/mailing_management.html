@@ -4,7 +4,11 @@
 
 <div class="row title">
     <div class="text-title">
+        {% if object %}
+        <h1>Редактировать рассылку</h1>
+        {% else %}
         <h1>Создать рассылку</h1>
+        {% endif %}
     </div>
 </div>
 
@@ -12,26 +16,32 @@
     <div class="col form">
 
         <form method="post">
-            
+
             <div class="card massage">
                 <div class="m-2">
-                    
+
                     <div class="cs-form">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        {{ form_settings.as_p }}
-                        
+                        {{ settings_form.as_p }}
+
                     </div>
 
                     <div class="">
+                        {% if object %}
+                        <input class="btn btn-primary" type="submit" value="Сохранить" />
+                        {% else %}
                         <input class="btn btn-primary" type="submit" value="Создать" />
-                    </div> 
+                        {% endif %}
+                    </div>
 
                 </div>
         </form>
 
     </div>
 </div>
+
+{% if mailing_list %}
 
 <div class="row title">
     <div class="text-title">
@@ -59,15 +69,44 @@
                         <th scope="row">{{ mailing.pk }}</th>
                         <td>{{ mailing.massage_subject }}</td>
                         <td>{{ mailing.mailingsettings.mailing_time }}</td>
-                        <td>{{ mailing.mailingsettings.mailing_periodicity }}</td>
+                        <td>{{ mailing.mailingsettings.mailing_periodicity}}</td>
                         <td>{{ mailing.mailingsettings.mailing_status }}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
                                     <a class="user-action" href={% url 'mail_sender:edit_mailing' mailing.pk %}>Ред.</a>
                                 </button>
-                                <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href={% url 'mail_sender:del_mailing' mailing.pk %}>Удалить</a>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Удалить рассылку?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p style="font-size: larger;">Восстановить данные будет невозможно.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Отмена</button>
+                                                <button type="button" class="btn btn-danger">
+                                                    <a class="user-action del" href={% url 'mail_sender:del_mailing' mailing.pk%}>
+                                                        Удалить
+                                                    </a>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    <div class="user-action">Удалить</div>
                                 </button>
 
                             </div>
@@ -80,35 +119,41 @@
     </div>
 </div>
 
+{% endif %}
+
 {% if mailing_list.has_other_pages %}
 <div class="row">
     <div class="col">
         <div class="paginator">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    
+
                     {% if mailing_list.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">Previous</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">{{ mailing_list.previous_page_number }}</a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ mailing_list.previous_page_number }}">{{
+                            mailing_list.previous_page_number }}</a>
+                    </li>
                     {% else %}
-                        <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
                     {% endif %}
-                    
-                    <li class="page-item"><a class="page-link current" href="?page={{ mailing_list.number }}">{{ mailing_list.number }}</a></li>
-                    
+
+                    <li class="page-item"><a class="page-link current" href="?page={{ mailing_list.number }}">{{
+                            mailing_list.number }}</a></li>
+
                     {% if mailing_list.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ mailing_list.next_page_number }}">{{ mailing_list.next_page_number }}</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="?page={{ mailing_list.next_page_number }}">Next</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ mailing_list.next_page_number }}">{{
+                            mailing_list.next_page_number }}</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ mailing_list.next_page_number }}">Next</a>
+                    </li>
                     {% else %}
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                        <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item disabled"><a class="page-link">Next</a></li>
                     {% endif %}
 
                 </ul>

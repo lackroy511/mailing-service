@@ -33,7 +33,27 @@
 .col.time.r {
     margin-right: 0.3rem;
 }
+.modal-content {
+    background-color: #313338;
+}
+.modal-header {
+    background-color: #313338;
+    border-color:#5d6063;
+}
 
+.modal-body {
+    background-color: #484c50;
+    border-color: #484c50;
+}
+
+.modal-footer {
+    background-color: #313338;
+    border-color: #5d6063;
+}
+
+.user-action.del {
+    color: rgb(249, 249, 249);
+}
 
 /* @media (max-width: 750px) {
     .card.massage {
