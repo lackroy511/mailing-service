@@ -48,18 +48,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in users_list %}
+                    {% for client in object_list %}
                     <tr>
-                        <th scope="row">{{ user.pk }}</th>
-                        <td>{{ user.first_name }} {{ user.last_name }} {{ user.surname }}</td>
-                        <td>{{ user.email }}</td>
+                        <th scope="row">{{ client.pk }}</th>
+                        <td>{{ client.first_name }} {{ client.last_name }} {{ client.surname }}</td>
+                        <td>{{ client.email }}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href={% url 'mail_sender:edit_user' user.pk %}>Ред.</a>
+                                    <a class="user-action" href="#">Ред.</a>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href={% url 'mail_sender:del_user' user.pk %}>Удалить</a>
+                                    <a class="user-action" href="#">Удалить</a>
                                 </button>
 
                             </div>
@@ -72,32 +72,32 @@
     </div>
 </div>
 
-{% if users_list.has_other_pages %}
+{% if object_list.has_other_pages %}
 <div class="row">
     <div class="col">
         <div class="paginator">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     
-                    {% if users_list.has_previous %}
+                    {% if object_list.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ users_list.previous_page_number }}">Previous</a>
+                            <a class="page-link" href="?page={{ object_list.previous_page_number }}">Previous</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ users_list.previous_page_number }}">{{ users_list.previous_page_number }}</a>
+                            <a class="page-link" href="?page={{ object_list.previous_page_number }}">{{ object_list.previous_page_number }}</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled"><a class="page-link">Previous</a></li>
                         <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
                     {% endif %}
                     
-                        <li class="page-item"><a class="page-link current" href="#">{{ users_list.number }}</a></li>
+                        <li class="page-item"><a class="page-link current" href="#">{{ object_list.number }}</a></li>
                     
-                    {% if users_list.has_next %}
+                    {% if object_list.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ users_list.next_page_number }}">{{ users_list.next_page_number }}</a>
+                            <a class="page-link" href="?page={{ object_list.next_page_number }}">{{ object_list.next_page_number }}</a>
                         </li>
-                        <li class="page-item"><a class="page-link" href="?page={{ users_list.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ object_list.next_page_number }}">Next</a></li>
                     {% else %}
                         <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
                         <li class="page-item disabled"><a class="page-link">Next</a></li>
