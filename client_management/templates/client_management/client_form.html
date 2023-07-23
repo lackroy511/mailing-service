@@ -5,9 +5,14 @@
 
 <div class="row title">
     <div class="text-title">
+        {% if object %}
+        <h1>Редактировать клиента</h1>
+        {% else %}
         <h1>Добавить клента</h1>
+        {% endif %}
     </div>
 </div>
+
 
 <div class="row main">
     <div class="col form">
@@ -16,19 +21,24 @@
             {% csrf_token %}
             <div class="card user">
                 <div class="m-2">
-                
-                {{ form.as_p}}
+
+                    {{ form.as_p}}
 
                 </div>
                 <div class="m-2">
+                    {% if object %}
+                    <input class="btn btn-primary" type="submit" value="Сохранить" />
+                    {% else %}
                     <input class="btn btn-primary" type="submit" value="Создать" />
+                    {% endif %}
+
                 </div>
             </div>
         </form>
 
     </div>
 </div>
-
+{% if object_list %}
 <div class="row title">
     <div class="text-title">
         <h2>Список пользователей</h1>
@@ -56,7 +66,7 @@
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href="#">Ред.</a>
+                                    <a class="user-action" href="{% url 'client:client_update' client.pk %}">Ред.</a>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary">
                                     <a class="user-action" href="#">Удалить</a>
@@ -71,6 +81,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% if object_list.has_other_pages %}
 <div class="row">
@@ -78,32 +89,33 @@
         <div class="paginator">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    
+
                     {% if object_list.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ object_list.previous_page_number }}">Previous</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ object_list.previous_page_number }}">{{ object_list.previous_page_number }}</a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ object_list.previous_page_number }}">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ object_list.previous_page_number }}">{{ object_list.previous_page_number }}</a>
+                    </li>
                     {% else %}
-                        <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                    {% endif %}
-                    
-                        <li class="page-item"><a class="page-link current" href="#">{{ object_list.number }}</a></li>
-                    
-                    {% if object_list.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ object_list.next_page_number }}">{{ object_list.next_page_number }}</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="?page={{ object_list.next_page_number }}">Next</a></li>
-                    {% else %}
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                        <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
                     {% endif %}
 
-                </ul>    
+                    <li class="page-item"><a class="page-link current" href="#">{{ object_list.number }}</a></li>
+
+                    {% if object_list.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ object_list.next_page_number }}">{{ object_list.next_page_number }}</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ object_list.next_page_number }}">Next</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    {% endif %}
+
+                </ul>
             </nav>
         </div>
     </div>
