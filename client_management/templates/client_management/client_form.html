@@ -61,7 +61,23 @@
                     {% for client in object_list %}
                     <tr>
                         <th scope="row">{{ client.pk }}</th>
-                        <td>{{ client.first_name }} {{ client.last_name }} {{ client.surname }}</td>
+                        <td>
+                            {% if client.first_name  %}
+                            {{ client.first_name }}
+                            {% else %}
+                            ...
+                            {% endif %}
+                            {% if  client.last_name  %}
+                            {{ client.last_name }}
+                            {% else %}
+                            ...
+                            {% endif %}
+                            {% if  client.surname  %}
+                            {{ client.surname }}
+                            {% else %}
+                            ...
+                            {% endif %}
+                        </td>
                         <td>{{ client.email }}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
