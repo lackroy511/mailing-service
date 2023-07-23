@@ -1,5 +1,7 @@
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import CreateView, UpdateView
 
 from client_management.forms import ClientForm
@@ -30,4 +32,15 @@ class ClientUpdateView(UpdateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('client:client_management')
-    
+
+
+def delete_client(request, pk):
+    '''
+    Управление рассылкой: Удаление клиента.
+    '''
+    try:
+        massage = Client.objects.get(pk=pk)
+        massage.delete()
+    except ObjectDoesNotExist:
+        return redirect('client:client_management')
+    return redirect('client:client_management')

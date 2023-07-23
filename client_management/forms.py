@@ -32,6 +32,6 @@ class ClientForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Ваш комментарий',
-                'rows': 3,
+                'rows': 2,
                 }),
         }

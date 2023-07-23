@@ -66,10 +66,38 @@
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href="{% url 'client:client_update' client.pk %}">Ред.</a>
+                                    <a class="user-action" href="{% url 'client:update_client' client.pk %}">Ред.</a>
                                 </button>
-                                <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href="#">Удалить</a>
+                                <!-- Modal -->
+                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Удалить клиента?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p style="font-size: larger;">Восстановить данные будет невозможно.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Отмена</button>
+                                                <button type="button" class="btn btn-danger">
+                                                    <a class="user-action del" href={% url 'client:delete_client' client.pk%}>
+                                                        Удалить
+                                                    </a>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    <div class="user-action">Удалить</div>
                                 </button>
 
                             </div>
