@@ -54,7 +54,7 @@ class MailingSettings(models.Model):
     )
 
     MAILING_STATUS_CHOICES = (
-        ('Создана', 'Создана'),
+        ('создана', 'Создана'),
         ('отправляется', 'Отправляется'),
         ('отправлена', 'Отправлена'),
     )
@@ -67,7 +67,7 @@ class MailingSettings(models.Model):
         choices=MAILING_PERIODICITY_CHOICES,
     )
     mailing_status = models.CharField(
-        max_length=20, verbose_name='cтатус', default='Создана',
+        max_length=20, verbose_name='cтатус', default='создана',
         choices=MAILING_STATUS_CHOICES,
     )
     mailing = models.OneToOneField(
