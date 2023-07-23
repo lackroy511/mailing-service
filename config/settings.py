@@ -40,10 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'django_crontab',
-    
-    'mail_sender',
+
+    'mailing_management',
 ]
 
 MIDDLEWARE = [

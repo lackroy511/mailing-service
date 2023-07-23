@@ -1,15 +1,8 @@
 from django.contrib import admin
 
-from mail_sender.models import Client, MailingSettings, MailingLogs, Mailing
+from mailing_management.models import MailingSettings, MailingLogs, \
+    Mailing
 # Register your models here.
-
-
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    """
-    Настройки админки для клиента.
-    """
-    list_display = ('email', 'first_name', 'last_name', 'surname', 'comment')
 
 
 @admin.register(Mailing)

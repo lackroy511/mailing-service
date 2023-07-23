@@ -1,4 +1,4 @@
-{% extends 'mail_sender/base.html' %}
+{% extends 'mailing_management/base.html' %}
 
 {% block content %}
 
@@ -74,7 +74,7 @@
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
-                                    <a class="user-action" href={% url 'mail_sender:edit_mailing' mailing.pk %}>Ред.</a>
+                                    <a class="user-action" href={% url 'mailing:edit_mailing' mailing.pk %}>Ред.</a>
                                 </button>
                                 
                                 <!-- Modal -->
@@ -95,7 +95,7 @@
                                                 <button type="button" class="btn btn-secondary"
                                                     data-bs-dismiss="modal">Отмена</button>
                                                 <button type="button" class="btn btn-danger">
-                                                    <a class="user-action del" href={% url 'mail_sender:del_mailing' mailing.pk%}>
+                                                    <a class="user-action del" href={% url 'mailing:del_mailing' mailing.pk%}>
                                                         Удалить
                                                     </a>
                                                 </button>

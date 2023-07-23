@@ -1,6 +1,6 @@
 from django import forms
 
-from mail_sender.models import Mailing, MailingSettings
+from mailing_management.models import Mailing, MailingSettings
 
 
 class MailingForm(forms.ModelForm):
