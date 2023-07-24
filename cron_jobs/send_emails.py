@@ -5,7 +5,7 @@ import argparse
 import os
 import sys
 
-# Абсолютный путь до файла скрипта, для того что бы работали импорты.
+# Абсолютный путь до директории проекта, для того что бы работали импорты.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath('send_emails.py')))
 sys.path.append(BASE_DIR)
 

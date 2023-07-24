@@ -1,4 +1,3 @@
-import os
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -6,9 +5,7 @@ from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
-from config.settings import BASE_DIR, CRON_JOBS_DIR
-
-from mailing_management.services import add_cron_job
+from services.crontab_utils import add_cron_job, generate_cron_command
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
 
@@ -19,22 +16,16 @@ def index(request):
     """
     Главная страница
     """
-
     schedule = '* * * * *'
-
-    path_to_project = os.path.join(BASE_DIR, '')
-    path_to_cron_jobs = CRON_JOBS_DIR
-    script_filename = 'send_emails.py'
-
-    path_to_script = f'PYTHONPATH={path_to_project} {path_to_project}{path_to_cron_jobs}{script_filename}'
-    
-    email_list = ['lackroy511@gmail.com', 'djang5111@gmail.com']
-    email_list = ' '.join(email_list)
-
     subject = 'ПРИШЛО ДВА'
     massage = 'привет ДВА'
 
-    command = f'{path_to_script} "{subject}" "{massage}" "{email_list}"'
+    script_filename = 'send_emails.py'
+    email_list = 'lackroy511@gmail.com'
+
+    command = generate_cron_command(
+        script_filename, subject, massage, email_list,
+    )
 
     add_cron_job(schedule, command)
 
