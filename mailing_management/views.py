@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
+from mailing_management.services import add_cron_job
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
 
@@ -16,6 +17,20 @@ def index(request):
     """
     Главная страница
     """
+
+    schedule = '* * * * *'
+
+    path_to_script = '/home/debian/Документы/SkyPro_projects/Coursework_6/send_emails.py'
+    email_list = ['lackroy511@gmail.com', 'djang5111@gmail.com']
+    email_list = ' '.join(email_list)
+
+    subject = 'ПРИШЛО ДВА'
+    massage = 'привет ДВА'
+
+    command = f'{path_to_script} "{subject}" "{massage}" "{email_list}"'
+
+    add_cron_job(schedule, command)
+
     context = {
         'is_active_main': 'active',
     }
