@@ -6,7 +6,7 @@ import os
 import sys
 
 # Абсолютный путь до директории проекта, для того что бы работали импорты.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath('send_emails.py')))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('send_emails.py'))))
 sys.path.append(BASE_DIR)
 
 from config.settings import EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, \
@@ -71,9 +71,7 @@ def send_emails(subject: str = 'ТЕСТОВОЕ СООБЩЕНИЕ',
 
 
 def main() -> None:
-
     args = parse_args()
-
     send_emails(subject=args.subject,
                 massage=args.massage,
                 email_list=args.email_list)

@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_path = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-CRON_JOBS_DIR = os.path.join('cron_jobs', '')
+CRON_JOBS_DIR = os.path.join('services', 'cron_jobs', '')
 
 
 
