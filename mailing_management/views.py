@@ -8,8 +8,8 @@ from django.views.generic import CreateView, UpdateView
 
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import SCRIPT_FILENAME, \
-    format_periodicity_to_cron_schedule, get_periodicity_display
+from mailing_management.services import SCRIPT_FILENAME, add_mailing_cron_job, \
+    format_periodicity_to_cron_schedule, get_periodicity_display, remove_mailing_cron_job
 
 from client_management.models import Client
 
@@ -69,16 +69,7 @@ class MailingCreateView(CreateView):
 
             mailing_settings.save()
 
-        schedule = mailing_settings.mailing_periodicity
-        subject = mailing.massage_subject
-        massage = mailing.massage_text
-        email_list = [client.email for client in Client.objects.all()]
-
-        command = generate_cron_command(
-            SCRIPT_FILENAME, subject, massage, email_list,
-        )
-
-        add_cron_job(schedule, command)
+        add_mailing_cron_job(mailing, mailing_settings)
 
         return super().form_valid(form)
 
@@ -92,18 +83,7 @@ class MailingUpdateView(UpdateView):
     success_url = reverse_lazy('mailing_management:mailing_management')
 
     def get_object(self, queryset=None):
-
-        pk = self.kwargs.get('pk')
-        mailing = Mailing.objects.get(pk=pk)
-
-        subject = mailing.massage_subject
-        massage = mailing.massage_text
-        email_list = [client.email for client in Client.objects.all()]
-
-        command = generate_cron_command(
-            SCRIPT_FILENAME, subject, massage, email_list,
-        )
-        remove_cron_job(command)
+        remove_mailing_cron_job(self)
 
         return super().get_object(queryset)
 
@@ -134,15 +114,7 @@ class MailingUpdateView(UpdateView):
 
             mailing_settings.save()
 
-        schedule = mailing_settings.mailing_periodicity
-        subject = mailing.massage_subject
-        massage = mailing.massage_text
-        email_list = [client.email for client in Client.objects.all()]
-
-        command = generate_cron_command(
-            SCRIPT_FILENAME, subject, massage, email_list,
-        )
-        add_cron_job(schedule, command)
+        add_mailing_cron_job(mailing, mailing_settings)
 
         return super().form_valid(form)
 
@@ -151,6 +123,7 @@ def del_mailing(request, pk):
     '''
     Управление рассылкой: Удаление рассылки.
     '''
+    remove_mailing_cron_job(pk=pk)
     try:
         massage = Mailing.objects.get(pk=pk)
         massage.delete()
