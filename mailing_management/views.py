@@ -8,13 +8,9 @@ from django.views.generic import CreateView, UpdateView
 
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import SCRIPT_FILENAME, add_mailing_cron_job, \
-    format_periodicity_to_cron_schedule, get_periodicity_display, remove_mailing_cron_job
+from mailing_management.services import format_periodicity_to_cron_schedule, \
+    get_periodicity_display, remove_mailing_cron_job, add_mailing_cron_job
 
-from client_management.models import Client
-
-from services.crontab_utils import add_cron_job, generate_cron_command, \
-    remove_cron_job
 
 # Create your views here.
 

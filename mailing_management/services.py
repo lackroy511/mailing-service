@@ -6,7 +6,7 @@ from services.crontab_utils import add_cron_job, generate_cron_command, \
     remove_cron_job
 
 
-SCRIPT_FILENAME = 'send_emails.py'
+SEND_EMAILS_SCRIPT_FILENAME = 'send_emails.py'
 
 
 def format_periodicity_to_cron_schedule(time: datetime,
@@ -54,7 +54,7 @@ def add_mailing_cron_job(mailing: Mailing,
     email_list = [client.email for client in Client.objects.all()]
 
     command = generate_cron_command(
-        SCRIPT_FILENAME, subject, massage, email_list,
+        SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
     )
 
     add_cron_job(schedule, command)
@@ -75,6 +75,6 @@ def remove_mailing_cron_job(self: Mailing = None, pk: int = None) -> None:
     email_list = [client.email for client in Client.objects.all()]
 
     command = generate_cron_command(
-        SCRIPT_FILENAME, subject, massage, email_list,
+        SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
     )
     remove_cron_job(command)
