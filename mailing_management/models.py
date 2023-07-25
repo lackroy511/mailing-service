@@ -28,9 +28,9 @@ class MailingSettings(models.Model):
     """
 
     MAILING_PERIODICITY_CHOICES = (
-        ('M H */1 * *', 'Раз в день'),
+        ('M H * * *', 'Раз в день'),
         ('M H * * 1', 'Раз в неделю'),
-        ('M H * */1 *', 'Раз в месяц'),
+        ('M H 1 * *', 'Раз в месяц'),
     )
 
     MAILING_STATUS_CHOICES = (

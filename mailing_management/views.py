@@ -68,8 +68,8 @@ class MailingCreateView(CreateView):
             mailing_settings.mailing_periodicity = periodicity
             mailing_settings.save()
 
-        schedule = '49 02 */1 * *'  # mailing_settings.mailing_periodicity
-        print(schedule)
+        schedule = mailing_settings.mailing_periodicity
+
         subject = mailing.massage_subject
         massage = mailing.massage_text
         email_list = [client.email for client in Client.objects.all()]
