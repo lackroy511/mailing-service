@@ -43,8 +43,11 @@ class MailingSettings(models.Model):
         auto_now=False, auto_now_add=False, verbose_name='время рассылки',
     )
     mailing_periodicity = models.CharField(
-        max_length=40, verbose_name='периодичность',
+        max_length=40, verbose_name='периодичность в формате crontab',
         choices=MAILING_PERIODICITY_CHOICES,
+    )
+    mailing_periodicity_display = models.CharField(
+        max_length=40, verbose_name='периодичность', **NULLABLE,
     )
     mailing_status = models.CharField(
         max_length=20, verbose_name='cтатус', default='создана',

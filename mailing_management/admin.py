@@ -18,7 +18,8 @@ class MailingSettingsAdmin(admin.ModelAdmin):
     """
     Настройки админки для настроек рассылки.
     """
-    list_display = ('mailing', 'mailing_periodicity', 'mailing_status')
+    list_display = ('mailing', 'mailing_periodicity',
+                    'mailing_periodicity_display', 'mailing_status')
 
 
 @admin.register(MailingLogs)

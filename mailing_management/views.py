@@ -1,3 +1,5 @@
+from typing import Any, Optional
+from django.db import models
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -8,11 +10,11 @@ from django.views.generic import CreateView, UpdateView
 
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import SCRIPT_FILENAME
+from mailing_management.services import SCRIPT_FILENAME, format_periodicity_to_cron_schedule, get_periodicity_display
 
 from client_management.models import Client
 
-from services.crontab_utils import add_cron_job, generate_cron_command
+from services.crontab_utils import add_cron_job, generate_cron_command, remove_cron_job
 
 # Create your views here.
 
@@ -57,19 +59,17 @@ class MailingCreateView(CreateView):
             mailing_settings.mailing = mailing
 
             time = mailing_settings.mailing_time
-            periodicity = mailing_settings.mailing_periodicity
+            raw_periodicity = mailing_settings.mailing_periodicity
 
-            formatted_time = time.strftime('%M:%H')
-            formatted_time = formatted_time.split(':')
+            mailing_settings.mailing_periodicity = \
+                format_periodicity_to_cron_schedule(time, raw_periodicity)
 
-            periodicity = periodicity.replace('H', formatted_time[1])
-            periodicity = periodicity.replace('M', formatted_time[0])
+            mailing_settings.mailing_periodicity_display = \
+                get_periodicity_display(raw_periodicity)
 
-            mailing_settings.mailing_periodicity = periodicity
             mailing_settings.save()
 
         schedule = mailing_settings.mailing_periodicity
-
         subject = mailing.massage_subject
         massage = mailing.massage_text
         email_list = [client.email for client in Client.objects.all()]
@@ -79,7 +79,6 @@ class MailingCreateView(CreateView):
         )
 
         add_cron_job(schedule, command)
-        
 
         return super().form_valid(form)
 
@@ -91,6 +90,22 @@ class MailingUpdateView(UpdateView):
     model = Mailing
     form_class = MailingForm
     success_url = reverse_lazy('mailing_management:mailing_management')
+
+    def get_object(self, queryset=None):
+
+        pk = self.kwargs.get('pk')
+        mailing = Mailing.objects.get(pk=pk)
+
+        subject = mailing.massage_subject
+        massage = mailing.massage_text
+        email_list = [client.email for client in Client.objects.all()]
+
+        command = generate_cron_command(
+            SCRIPT_FILENAME, subject, massage, email_list,
+        )
+        remove_cron_job(command)
+
+        return super().get_object(queryset)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -108,24 +123,26 @@ class MailingUpdateView(UpdateView):
                 pk=mailing.mailingsettings.pk,
             )
 
-            mailing_settings.mailing_time = \
-                settings_form.cleaned_data['mailing_time']
+            time = settings_form.cleaned_data['mailing_time']
+            raw_periodicity = settings_form.cleaned_data['mailing_periodicity']
 
+            mailing_settings.mailing_time = time
             mailing_settings.mailing_periodicity = \
-                settings_form.cleaned_data['mailing_periodicity']
-
-            time = mailing_settings.mailing_time
-            periodicity = mailing_settings.mailing_periodicity
-
-            formatted_time = time.strftime('%M:%H')
-            formatted_time = formatted_time.split(':')
-
-            periodicity = periodicity.replace('M', formatted_time[1])
-            periodicity = periodicity.replace('H', formatted_time[0])
-
-            mailing_settings.mailing_periodicity = periodicity
+                format_periodicity_to_cron_schedule(time, raw_periodicity)
+            mailing_settings.mailing_periodicity_display = \
+                get_periodicity_display(raw_periodicity)
 
             mailing_settings.save()
+
+        schedule = mailing_settings.mailing_periodicity
+        subject = mailing.massage_subject
+        massage = mailing.massage_text
+        email_list = [client.email for client in Client.objects.all()]
+
+        command = generate_cron_command(
+            SCRIPT_FILENAME, subject, massage, email_list,
+        )
+        add_cron_job(schedule, command)
 
         return super().form_valid(form)
 
