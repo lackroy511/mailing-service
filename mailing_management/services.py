@@ -36,5 +36,3 @@ def get_periodicity_display(raw_periodicity: str) -> str:
     """
     return dict(
         MailingSettings.MAILING_PERIODICITY_CHOICES).get(raw_periodicity)
-
-

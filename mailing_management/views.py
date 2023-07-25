@@ -1,5 +1,3 @@
-from typing import Any, Optional
-from django.db import models
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -10,11 +8,13 @@ from django.views.generic import CreateView, UpdateView
 
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import SCRIPT_FILENAME, format_periodicity_to_cron_schedule, get_periodicity_display
+from mailing_management.services import SCRIPT_FILENAME, \
+    format_periodicity_to_cron_schedule, get_periodicity_display
 
 from client_management.models import Client
 
-from services.crontab_utils import add_cron_job, generate_cron_command, remove_cron_job
+from services.crontab_utils import add_cron_job, generate_cron_command, \
+    remove_cron_job
 
 # Create your views here.
 
