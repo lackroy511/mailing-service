@@ -22,7 +22,6 @@ load_dotenv(dotenv_path=dotenv_path)
 CRON_JOBS_DIR = os.path.join('services', 'cron_jobs', '')
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -121,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.getenv('TIME_ZONE')
 
 USE_I18N = True
 

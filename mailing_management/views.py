@@ -1,4 +1,7 @@
-from config.settings import EMAIL_HOST_USER
+from datetime import datetime
+import pytz
+
+from config.settings import EMAIL_HOST_USER, TIME_ZONE
 
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
@@ -59,11 +62,12 @@ class MailingCreateView(CreateView):
             mailing_settings = settings_form.save(commit=False)
             mailing_settings.mailing = mailing
 
-            time = mailing_settings.mailing_time
+            time_of_mailing = mailing_settings.mailing_time
             raw_periodicity = mailing_settings.mailing_periodicity
 
             mailing_settings.mailing_periodicity = \
-                format_periodicity_to_cron_schedule(time, raw_periodicity)
+                format_periodicity_to_cron_schedule(time_of_mailing,
+                                                    raw_periodicity)
 
             mailing_settings.mailing_periodicity_display = \
                 get_periodicity_display(raw_periodicity)
@@ -71,9 +75,14 @@ class MailingCreateView(CreateView):
             mailing_settings.save()
 
         add_mailing_cron_job(mailing, mailing_settings)
-        email_list = [client.email for client in Client.objects.all()]
-        send_mail(mailing.massage_subject, mailing.massage_text,
-                  EMAIL_HOST_USER, email_list)
+        
+        timezone = pytz.timezone(TIME_ZONE)
+        time_now = datetime.now(tz=timezone).time()
+        
+        if time_now > time_of_mailing:
+            email_list = [client.email for client in Client.objects.all()]
+            send_mail(mailing.massage_subject, mailing.massage_text,
+                      EMAIL_HOST_USER, email_list)
 
         return super().form_valid(form)
 
@@ -107,12 +116,13 @@ class MailingUpdateView(UpdateView):
                 pk=mailing.mailingsettings.pk,
             )
 
-            time = settings_form.cleaned_data['mailing_time']
+            time_of_mailing = settings_form.cleaned_data['mailing_time']
             raw_periodicity = settings_form.cleaned_data['mailing_periodicity']
 
-            mailing_settings.mailing_time = time
+            mailing_settings.mailing_time = time_of_mailing
             mailing_settings.mailing_periodicity = \
-                format_periodicity_to_cron_schedule(time, raw_periodicity)
+                format_periodicity_to_cron_schedule(time_of_mailing,
+                                                    raw_periodicity)
             mailing_settings.mailing_periodicity_display = \
                 get_periodicity_display(raw_periodicity)
 
