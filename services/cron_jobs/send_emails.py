@@ -1,5 +1,4 @@
 #!/home/debian/.cache/pypoetry/virtualenvs/coursework-6-7n6ESyJz-py3.11/bin/python
-# Путь до интерпретатора Python в виртуальном окружении.
 import argparse
 import os
 import sys
@@ -12,9 +11,6 @@ sys.path.append(BASE_DIR)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
-
-from mailing_management.models import Mailing
-from config.settings import EMAIL_HOST_USER
 
 
 def get_args() -> argparse.Namespace:
@@ -35,6 +31,9 @@ def get_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    from mailing_management.models import Mailing
+    from config.settings import EMAIL_HOST_USER
+
     args = get_args()
 
     if args.pk is not None:

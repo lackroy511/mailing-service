@@ -75,10 +75,10 @@ class MailingCreateView(CreateView):
             mailing_settings.save()
 
         add_mailing_cron_job(mailing, mailing_settings)
-        
+
         timezone = pytz.timezone(TIME_ZONE)
         time_now = datetime.now(tz=timezone).time()
-        
+
         if time_now > time_of_mailing:
             email_list = [client.email for client in Client.objects.all()]
             send_mail(mailing.massage_subject, mailing.massage_text,
