@@ -16,7 +16,7 @@ from config.settings import EMAIL_HOST_USER
 from mailing_management.models import Mailing
 
 
-def parse_args() -> argparse.Namespace:
+def get_args() -> argparse.Namespace:
     """ Парсинг позиционных аргументов из cron задачи.
     Returns:
         argparse: Объект argparse с аргументами.
@@ -33,32 +33,17 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def send_emails(subject: str,
-                massage: str,
-                sender: str,
-                email_list: str) -> None:
-    """ Отправляет письма по списку адресов электронной почты.
-    Args:
-        subject (str): Тема письма
-        massage (str): Текст письма
-        email_list (str): Список адресов электронной почты, одной строкой,
-                          разделенных символом пробела.
-    """
-    email_list = email_list.split(' ')
-    send_mail(subject, massage, sender, email_list)
-
-
 def main() -> None:
-    args = parse_args()
+    args = get_args()
 
     mailing = Mailing.objects.get(pk=args.pk)
 
     mailing.mailingsettings.mailing_status = 'отправляется'
     mailing.mailingsettings.save()
-    send_emails(subject=args.subject,
-                massage=args.massage,
-                sender=EMAIL_HOST_USER,
-                email_list=args.email_list)
+    send_mail(args.subject,
+              args.massage,
+              EMAIL_HOST_USER,
+              args.email_list.split(' '))
     mailing.mailingsettings.mailing_status = 'завершена'
     mailing.mailingsettings.save()
 
