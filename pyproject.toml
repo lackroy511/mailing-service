@@ -13,6 +13,7 @@ psycopg2 = "^2.9.6"
 redis = "^4.6.0"
 python-dotenv = "^1.0.0"
 python-crontab = "^3.0.0"
+django-extensions = "^3.2.3"
 
 
 [tool.poetry.group.dev.dependencies]

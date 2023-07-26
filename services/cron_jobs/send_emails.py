@@ -4,10 +4,13 @@ import smtplib
 import argparse
 import os
 import sys
+import django
 
-# Абсолютный путь до директории проекта, для того что бы работали импорты.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('send_emails.py'))))
 sys.path.append(BASE_DIR)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+django.setup()
 
 from config.settings import EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, \
     EMAIL_HOST_PASSWORD
@@ -23,6 +26,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('subject', type=str)
     parser.add_argument('massage', type=str)
     parser.add_argument('email_list', type=str)
+    parser.add_argument('--pk', type=int)
 
     args = parser.parse_args()
 
@@ -72,9 +76,16 @@ def send_emails(subject: str = 'ТЕСТОВОЕ СООБЩЕНИЕ',
 
 def main() -> None:
     args = parse_args()
+
+    from mailing_management.models import Mailing
+
+    mailing = Mailing.objects.get(pk=args.pk)
+
+    mailing.mailingsettings.mailing_status = 'отправляется'
     send_emails(subject=args.subject,
                 massage=args.massage,
                 email_list=args.email_list)
+    mailing.mailingsettings.mailing_status = 'завершена'
 
 
 if __name__ == '__main__':

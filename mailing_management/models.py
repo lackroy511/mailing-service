@@ -36,7 +36,7 @@ class MailingSettings(models.Model):
     MAILING_STATUS_CHOICES = (
         ('создана', 'Создана'),
         ('отправляется', 'Отправляется'),
-        ('отправлена', 'Отправлена'),
+        ('завершена', 'Завершена'),
     )
 
     mailing_time = models.TimeField(

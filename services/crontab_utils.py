@@ -4,10 +4,13 @@ from crontab import CronTab
 from config.settings import BASE_DIR, CRON_JOBS_DIR
 
 
-def generate_cron_command(script_filename: str, *args: str | list) -> str:
+def generate_cron_command(script_filename: str,
+                          pk: int = None,
+                          *args: str | list) -> str:
     """Формирует команду для добавления/удаления задачи в crontab.
     Args:
         script_filename (str): Имя python скрипта.
+        pk (int): pk объекта Mailing.
         *args (str): Позиционные аргументы, которые используются внутри скрипта
 
     Returns:
@@ -25,6 +28,9 @@ def generate_cron_command(script_filename: str, *args: str | list) -> str:
             if isinstance(arg, list):
                 arg = list_to_string_with_spaces(arg)
             command += f' "{arg}"'
+
+    if pk:
+        command += f' --pk {pk}'
 
     return command
 

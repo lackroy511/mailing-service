@@ -54,7 +54,7 @@ def add_mailing_cron_job(mailing: Mailing,
     email_list = [client.email for client in Client.objects.all()]
 
     command = generate_cron_command(
-        SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
+        SEND_EMAILS_SCRIPT_FILENAME, mailing.pk, subject, massage, email_list,
     )
 
     add_cron_job(schedule, command)
