@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     'mailing_management',
     'client_management',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +157,9 @@ if CACHE_ENABLED:
             "LOCATION": "redis://127.0.0.1:6379",
         }
     }
+
+AUTH_USER_MODEL = 'users.User'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
