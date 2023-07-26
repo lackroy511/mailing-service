@@ -5,12 +5,11 @@ from config.settings import BASE_DIR, CRON_JOBS_DIR
 
 
 def generate_cron_command(script_filename: str,
-                          pk: int = None,
-                          *args: str | list) -> str:
+                          pk: str = None, *args: str | list) -> str:
     """Формирует команду для добавления/удаления задачи в crontab.
     Args:
         script_filename (str): Имя python скрипта.
-        pk (int): pk объекта Mailing.
+        pk (str): pk объекта Mailing.
         *args (str): Позиционные аргументы, которые используются внутри скрипта
 
     Returns:

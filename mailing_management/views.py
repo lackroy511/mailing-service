@@ -1,3 +1,5 @@
+from config.settings import EMAIL_HOST_USER
+
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -5,7 +7,10 @@ from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
+from django.core.mail import send_mail
 
+
+from client_management.models import Client
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
 from mailing_management.services import format_periodicity_to_cron_schedule, \
@@ -66,6 +71,9 @@ class MailingCreateView(CreateView):
             mailing_settings.save()
 
         add_mailing_cron_job(mailing, mailing_settings)
+        email_list = [client.email for client in Client.objects.all()]
+        send_mail(mailing.massage_subject, mailing.massage_text,
+                  EMAIL_HOST_USER, email_list)
 
         return super().form_valid(form)
 
