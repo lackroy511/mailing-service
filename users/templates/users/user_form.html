@@ -1,0 +1,63 @@
+{% extends 'mailing_management/base.html' %}
+
+{% load format_path_to_image %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<div class="row title">
+    <div class="text-title">
+        <h1>Регистрация</h1>
+    </div>
+</div>
+{% else %}
+<div class="row title">
+    <div class="text-title">
+        <h1>Данные профиля</h1>
+    </div>
+</div>
+{% endif %}
+
+
+<div class="row">
+    <div class="col">
+        <div class="card massage">
+            <div class="m-2">
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% if not user.is_authenticated %}
+                    <ul style="margin-top: 1rem;">
+                        <li>Пароль должен быть ЛЮБЫМ, но не короче 6 символов.</li>
+                    </ul>
+                    <div class="">
+                        <input class="btn btn-primary" type="submit" value="Регистрация" />
+                    </div>
+                    {% else %}
+                    <div class="">
+                        <input class="btn btn-primary" type="submit" value="Сохранить" />
+                    </div>
+                    {% endif %}
+
+                    
+                </form>
+            </div>
+        </div> 
+        <div>
+            {% if object.avatar %}
+            <div class="picture" style="margin-top: 3rem;">
+
+                <p style="width: 30rem; color: aliceblue; text-align: center; font-size: larger; margin-left: auto; margin-right: auto;">
+                    Это ты, пользователь, ля красивый!
+                </p>
+
+                <img style="width: 30rem; display: flex; margin-left: auto; margin-right: auto; margin-bottom: 3rem;" 
+                src="{{ object.avatar | format_path_to_image }}" alt="">
+            </div>
+            {% endif %}
+        </div>  
+    </div>
+</div>
+
+
+{% endblock  %}

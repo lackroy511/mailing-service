@@ -41,16 +41,38 @@
                             <a class="nav-link {{ is_active_contacts }}" href="#">Затычка</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav" style="margin-left: auto;">
+                        {% if not user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ is_active_login }}" aria-current="page" href={% url 'user:login' %}>Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ is_active_register }}" aria-current="page" href={% url 'user:register' %}>Регистрация</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ is_active_profile }}" aria-current="page" href={% url 'users:profile' %}>Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href={% url 'user:logout' %}>Выйти</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% if user.is_authenticated %}
                     <div class="dropdown nav-bar">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          Менеджер рассылок
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Менеджер рассылок
                         </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href={% url 'client:client_management' %}>Управление пользователями</a></li>
-                          <li><a class="dropdown-item" href={% url 'mailing:mailing_management' %}>Управление рассылками</a></li>
-                          <li><a class="dropdown-item" href="#">Отчет о рассылках</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href={% url 'client:client_management' %}>Управление
+                                    пользователями</a></li>
+                            <li><a class="dropdown-item" href={% url 'mailing:mailing_management' %}>Управление
+                                    рассылками</a></li>
+                            <li><a class="dropdown-item" href="#">Отчет о рассылках</a></li>
                         </ul>
-                      </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </nav>

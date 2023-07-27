@@ -16,11 +16,10 @@
 }
 
 .dropdown.nav-bar {
-    margin-left: auto;
-    margin-right: 3rem;
+    margin-left: 1rem;
+    margin-right: 0rem;
+    
 }
-
-
 
 /*Настройки активной кнопки*/
 .navbar-nav .nav-link.active {

@@ -16,6 +16,8 @@ python-crontab = "^3.0.0"
 django-extensions = "^3.2.3"
 pytz = "^2023.3"
 pillow = "^10.0.0"
+d = "^0.2.2"
+pyjwt = "^2.8.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,0 +1,30 @@
+{% extends 'mailing_management/base.html' %}
+
+{% block content %}
+
+<div class="row title"">
+    <div class="text-title" style="margin-bottom: 5rem; margin-top: 5rem;">
+        <h1>Вход</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card massage">
+            <div class="m-2">
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <div class="">
+                        <input class="btn btn-primary" type="submit" value="Войти" />
+                    </div>
+                </form>
+            </div>
+        </div>   
+    </div>
+</div>
+
+
+{% endblock  %}
