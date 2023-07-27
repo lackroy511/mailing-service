@@ -1,5 +1,6 @@
 from django.db import models
 
+from users.models import User
 # Create your models here.
 
 NULLABLE = {'null': True, 'blank': True}
@@ -13,6 +14,9 @@ class Mailing(models.Model):
         max_length=250, verbose_name='тема сообщения',
     )
     massage_text = models.TextField(verbose_name='текст сообщения')
+
+    user = models.ForeignKey(
+        User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f'Тема сообщения: {self.massage_subject}'

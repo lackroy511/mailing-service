@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from mailing_management.models import NULLABLE
-
+NULLABLE = {'null': True, 'blank': True}
 
 # Create your models here.
 

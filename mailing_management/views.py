@@ -1,23 +1,21 @@
-from datetime import datetime
-import pytz
-
-from config.settings import EMAIL_HOST_USER, TIME_ZONE
 
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
-from django.core.mail import send_mail
-
-
 from client_management.models import Client
+
+
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import format_periodicity_to_cron_schedule, \
-    get_periodicity_display, remove_mailing_cron_job, add_mailing_cron_job
+from mailing_management.services import remove_mailing_cron_job, \
+    add_mailing_cron_job, get_page_obj_for_mailing, \
+    save_mailing_settings_periodicity, start_mailing, \
+    upd_mailing_settings_periodicity
+
+from services.mixins import OwnerCheckMixin
 
 
 # Create your views here.
@@ -45,49 +43,33 @@ class MailingCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context["settings_form"] = MailingSettingsForm
 
-        mailing_list = Mailing.objects.all()
-        paginator = Paginator(mailing_list, 5)
-        page_number = self.request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context['mailing_list'] = page_obj
+        context['mailing_list'] = get_page_obj_for_mailing(self)
 
         return context
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        mailing = form.save()
+        mailing = form.save(commit=False)
+        mailing.user = self.request.user
+        mailing.save()
 
         settings_form = MailingSettingsForm(self.request.POST)
         if settings_form.is_valid():
             mailing_settings = settings_form.save(commit=False)
             mailing_settings.mailing = mailing
 
-            time_of_mailing = mailing_settings.mailing_time
-            raw_periodicity = mailing_settings.mailing_periodicity
+            save_mailing_settings_periodicity(mailing_settings)
 
-            mailing_settings.mailing_periodicity = \
-                format_periodicity_to_cron_schedule(time_of_mailing,
-                                                    raw_periodicity)
+        add_mailing_cron_job(self, mailing, mailing_settings)
 
-            mailing_settings.mailing_periodicity_display = \
-                get_periodicity_display(raw_periodicity)
+        email_list = [client.email for client in Client.objects.filter(
+            user=self.request.user)]
 
-            mailing_settings.save()
-
-        add_mailing_cron_job(mailing, mailing_settings)
-
-        timezone = pytz.timezone(TIME_ZONE)
-        time_now = datetime.now(tz=timezone).time()
-
-        if time_now > time_of_mailing:
-            email_list = [client.email for client in Client.objects.all()]
-            send_mail(mailing.massage_subject, mailing.massage_text,
-                      EMAIL_HOST_USER, email_list)
+        start_mailing(self, mailing, mailing_settings, email_list)
 
         return super().form_valid(form)
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(OwnerCheckMixin, UpdateView):
     '''
     Управление рассылкой: Создание рассылки.
     '''
@@ -96,7 +78,7 @@ class MailingUpdateView(UpdateView):
     success_url = reverse_lazy('mailing_management:mailing_management')
 
     def get_object(self, queryset=None):
-        remove_mailing_cron_job(self)
+        remove_mailing_cron_job(self=self)
 
         return super().get_object(queryset)
 
@@ -111,24 +93,12 @@ class MailingUpdateView(UpdateView):
 
         settings_form = MailingSettingsForm(self.request.POST)
         if settings_form.is_valid():
-
             mailing_settings = MailingSettings.objects.get(
                 pk=mailing.mailingsettings.pk,
             )
+            upd_mailing_settings_periodicity(mailing_settings, settings_form)
 
-            time_of_mailing = settings_form.cleaned_data['mailing_time']
-            raw_periodicity = settings_form.cleaned_data['mailing_periodicity']
-
-            mailing_settings.mailing_time = time_of_mailing
-            mailing_settings.mailing_periodicity = \
-                format_periodicity_to_cron_schedule(time_of_mailing,
-                                                    raw_periodicity)
-            mailing_settings.mailing_periodicity_display = \
-                get_periodicity_display(raw_periodicity)
-
-            mailing_settings.save()
-
-        add_mailing_cron_job(mailing, mailing_settings)
+        add_mailing_cron_job(self, mailing, mailing_settings)
 
         return super().form_valid(form)
 
@@ -137,10 +107,16 @@ def del_mailing(request, pk):
     '''
     Управление рассылкой: Удаление рассылки.
     '''
-    remove_mailing_cron_job(pk=pk)
+    remove_mailing_cron_job(pk=pk, request=request)
+
     try:
-        massage = Mailing.objects.get(pk=pk)
-        massage.delete()
+        mailing = Mailing.objects.get(pk=pk)
+
+        if mailing.user != request.user:
+            return redirect('mailing_management:index')
+
+        mailing.delete()
     except ObjectDoesNotExist:
         return redirect('mailing_management:mailing_management')
+
     return redirect('mailing_management:mailing_management')
