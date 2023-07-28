@@ -3,7 +3,7 @@ from mailing_management.apps import MailingManagementConfig
 
 from mailing_management.views import index, \
     MailingCreateView, del_mailing, \
-    MailingUpdateView
+    MailingUpdateView, LogListView
 
 app_name = MailingManagementConfig.name
 
@@ -14,4 +14,6 @@ urlpatterns = [
     path("del_mailing/<int:pk>/", del_mailing, name="del_mailing"),
     path("edit_mailing/<int:pk>/", MailingUpdateView.as_view(),
          name="edit_mailing"),
+
+    path("logs/", LogListView.as_view(), name="logs"),
 ]

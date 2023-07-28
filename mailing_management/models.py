@@ -59,7 +59,7 @@ class MailingSettings(models.Model):
         max_length=40, verbose_name='периодичность', **NULLABLE,
     )
     mailing_status = models.CharField(
-        max_length=20, verbose_name='cтатус', default='создана',
+        max_length=20, verbose_name='cтатус', default='Создана',
         choices=MAILING_STATUS_CHOICES,
     )
     mailing = models.OneToOneField(
@@ -87,6 +87,9 @@ class MailingLogs(models.Model):
         max_length=250, verbose_name='статус попытки')
     server_response = models.CharField(
         max_length=250, verbose_name='ответ сервера', **NULLABLE)
+
+    user = models.ForeignKey(
+        User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     mailing = models.ForeignKey(
         Mailing, on_delete=models.CASCADE, verbose_name='рассылка')

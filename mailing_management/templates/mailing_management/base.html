@@ -69,7 +69,7 @@
                                     пользователями</a></li>
                             <li><a class="dropdown-item" href={% url 'mailing:mailing_management' %}>Управление
                                     рассылками</a></li>
-                            <li><a class="dropdown-item" href="#">Отчет о рассылках</a></li>
+                            <li><a class="dropdown-item" href={% url 'mailing:logs' %}>Отчет о рассылках</a></li>
                         </ul>
                     </div>
                     {% endif %}

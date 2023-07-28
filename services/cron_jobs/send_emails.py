@@ -112,7 +112,10 @@ def create_success_log(mailing: Mailing) -> None:
         mailing (Mailing): Объект Mailing.
     """
     log = MailingLogs.objects.create(
-        try_status='Успешно отправлено.', mailing=mailing)
+        try_status='Успешно отправлено.',
+        mailing=mailing,
+        user=mailing.user,
+        )
     log.save()
 
 
@@ -126,6 +129,7 @@ def create_error_log(mailing: Mailing, exception: str) -> None:
         try_status='Ошибка отправки сообщений.',
         server_response=f"Отправка сообщений завершена с ошибкой:{str(exception)}",
         mailing=mailing,
+        user=mailing.user,
     )
     log.save()
 

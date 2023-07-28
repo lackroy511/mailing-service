@@ -3,11 +3,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 from client_management.models import Client
 
 
-from mailing_management.models import Mailing, MailingSettings
+from mailing_management.models import Mailing, MailingSettings, MailingLogs
 from mailing_management.forms import MailingForm, MailingSettingsForm
 from mailing_management.services import add_mailing_cron_job, \
     remove_mailing_cron_job, \
@@ -119,3 +119,13 @@ def del_mailing(request, pk):
         return redirect('mailing_management:mailing_management')
 
     return redirect('mailing_management:mailing_management')
+
+
+class LogListView(ListView):
+    model = MailingLogs
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+
+        return queryset

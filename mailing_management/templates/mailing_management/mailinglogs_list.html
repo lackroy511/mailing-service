@@ -1,0 +1,42 @@
+{% extends 'mailing_management/base.html' %}
+
+{% block content %}
+
+<div class="row title">
+    <div class="text-title">
+        <h2>История рассылок</h1>
+    </div>
+</div>
+
+<div class="row mb-0 table">
+    <div class="col table">
+        <div class="card table">
+            <table class="table mb-0 table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Дата рассылки</th>
+                        <th scope="col">Ответ сервера</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <th scope="row">{{ object.pk }}</th>
+                        <td>{{ object.try_status }}</td>
+                        <td>{{ object.last_try_date }}</td>
+                        {% if object.server_response %}
+                        <td>{{ object.server_response }}</td>
+                        {% else %}
+                        <td>...</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

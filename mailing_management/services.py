@@ -121,8 +121,7 @@ def set_end_mailing_time_for_cron_command(command: str,
 
 
 def save_mailing_settings_periodicity(
-    mailing_settings: MailingSettings,
-) -> None:
+        mailing_settings: MailingSettings) -> None:
     """Сохранить настройки расписания для рассылки.
     Args:
         mailing_settings (MailingSettings): Настройки рассылки.
