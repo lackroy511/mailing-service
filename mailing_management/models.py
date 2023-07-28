@@ -83,7 +83,8 @@ class MailingLogs(models.Model):
 
     last_try_date = models.DateTimeField(
         auto_now_add=True, verbose_name='дата и время попытки')
-    try_status = models.CharField(max_length=250, verbose_name='статус попытки')
+    try_status = models.CharField(
+        max_length=250, verbose_name='статус попытки')
     server_response = models.CharField(
         max_length=250, verbose_name='ответ сервера', **NULLABLE)
 
