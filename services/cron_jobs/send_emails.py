@@ -34,7 +34,7 @@ def get_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    from mailing_management.models import Mailing
+    from mailing_management.models import Mailing, MailingLogs
     from mailing_management.services import SEND_EMAILS_SCRIPT_FILENAME, \
         set_end_mailing_time_for_cron_command, set_pk_for_cron_command
     from config.settings import EMAIL_HOST_USER, TIME_ZONE
@@ -47,10 +47,25 @@ def main() -> None:
         mailing.mailingsettings.mailing_status = 'Отправляется'
         mailing.mailingsettings.save()
 
-    send_mail(args.subject,
-              args.massage,
-              EMAIL_HOST_USER,
-              args.email_list.split(' '))
+    try:
+        send_mail(args.subject,
+                  args.massage,
+                  EMAIL_HOST_USER,
+                  args.email_list.split(' '))
+
+        log = MailingLogs.objects.create(
+            try_status='Успешно отправлено.',
+            mailing=mailing,
+        )
+        log.save()
+
+    except Exception as e:
+        log = MailingLogs.objects.create(
+            try_status='Ошибка отправки сообщений.',
+            server_response=f"Отправка сообщений завершена с ошибкой:{str(e)}",
+            mailing=mailing,
+        )
+        log.save()
 
     if args.pk is not None:
         mailing.mailingsettings.mailing_status = 'Завершена'
