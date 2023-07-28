@@ -39,8 +39,6 @@ def add_cron_job(schedule: str, command: str) -> None:
     """
     cron = CronTab(user=True)
 
-    schedule = "* * * * *"
-
     job = cron.new(command=command)
     job.setall(schedule)
 
