@@ -11,6 +11,7 @@ from services.crontab_utils import add_cron_job, generate_cron_command, \
     remove_cron_job
 
 from config.settings import EMAIL_HOST_USER, TIME_ZONE
+from services.utils import datetime_to_string
 
 SEND_EMAILS_SCRIPT_FILENAME = 'send_emails.py'
 
@@ -42,9 +43,16 @@ def add_mailing_cron_job(self, mailing: Mailing,
         user=self.request.user)]
 
     command = generate_cron_command(
-        SEND_EMAILS_SCRIPT_FILENAME, mailing.pk, subject, massage, email_list,
+        SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
     )
+    command = set_pk_for_cron_command(command, mailing.pk)
 
+    time_zone = pytz.timezone(TIME_ZONE)
+
+    command = set_end_mailing_time_for_cron_command(
+        command, mailing_settings.end_mailing_time.astimezone(time_zone))
+    """_summary_
+    """
     add_cron_job(schedule, command)
 
 
@@ -69,13 +77,47 @@ def remove_mailing_cron_job(self=None, pk: int = None, request=None) -> None:
         email_list = [client.email for client in Client.objects.filter(
             user=self.request.user)]
 
-    print(email_list)
-
     command = generate_cron_command(
-        SEND_EMAILS_SCRIPT_FILENAME, pk, subject, massage, email_list,
+        SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
     )
 
+    end_mailing_time = mailing.mailingsettings.end_mailing_time
+
+    time_zone = pytz.timezone(TIME_ZONE)
+    end_mailing_time = end_mailing_time.astimezone(time_zone)
+
+    command = set_pk_for_cron_command(command, pk)
+    command = set_end_mailing_time_for_cron_command(
+        command, end_mailing_time)
+
     remove_cron_job(command)
+
+
+def set_pk_for_cron_command(command: str, pk: str) -> str:
+    """Устанавливает pk для команды.
+    Args:
+        command (str): Строка команды.
+        pk (str): pk объекта Mailing.
+
+    Returns:
+        str: Сформированная команда.
+    """
+    return command + f' --pk {pk}'
+
+
+def set_end_mailing_time_for_cron_command(command: str,
+                                          datetime: datetime) -> str:
+    """Устанавливает end_datetime для команды.
+    Args:
+        command (str): Строка команды
+        datetime (datetime): дата и время окончания рассылки.
+
+    Returns:
+        str: Сформированная команда.
+    """
+    dt_str = datetime_to_string(datetime)
+
+    return command + f' --end_mailing_time "{dt_str}"'
 
 
 def save_mailing_settings_periodicity(
@@ -109,6 +151,8 @@ def upd_mailing_settings_periodicity(mailing_settings: Mailing,
     time_of_mailing = settings_form.cleaned_data['mailing_time']
     raw_periodicity = settings_form.cleaned_data['mailing_periodicity']
 
+    mailing_settings.end_mailing_time = \
+        settings_form.cleaned_data['end_mailing_time']
     mailing_settings.mailing_time = time_of_mailing
     mailing_settings.mailing_periodicity = \
         format_periodicity_to_cron_schedule(time_of_mailing,

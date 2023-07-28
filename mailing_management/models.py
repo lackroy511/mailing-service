@@ -41,10 +41,15 @@ class MailingSettings(models.Model):
         ('создана', 'Создана'),
         ('отправляется', 'Отправляется'),
         ('завершена', 'Завершена'),
+        ('устарела', 'Устарела'),
     )
 
     mailing_time = models.TimeField(
         auto_now=False, auto_now_add=False, verbose_name='время рассылки',
+    )
+    end_mailing_time = models.DateTimeField(
+        auto_now=False, auto_now_add=False,
+        verbose_name='дата и время окончания рассылки',
     )
     mailing_periodicity = models.CharField(
         max_length=40, verbose_name='периодичность в формате crontab',

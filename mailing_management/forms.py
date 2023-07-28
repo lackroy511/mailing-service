@@ -24,10 +24,15 @@ class MailingSettingsForm(forms.ModelForm):
 
     class Meta:
         model = MailingSettings
-        fields = ('mailing_time', 'mailing_periodicity')
+        fields = ('mailing_time', 'end_mailing_time', 'mailing_periodicity')
         widgets = {
             'mailing_time': forms.TimeInput(attrs={
                 'type': 'time',
+                'class': 'form-control',
+            }),
+
+            'end_mailing_time': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
                 'class': 'form-control',
             }),
 

@@ -57,8 +57,9 @@
                     <tr>
                         <th scope="col">id</th>
                         <th scope="col">Тема</th>
-                        <th scope="col">время</th>
+                        <th scope="col">Время отправки</th>
                         <th scope="col">Периодичность</th>
+                        <th scope="col">Дата отключения</th>
                         <th scope="col">Статус</th>
                         <th scope="col">Действие</th>
                     </tr>
@@ -70,6 +71,7 @@
                         <td>{{ mailing.massage_subject }}</td>
                         <td>{{ mailing.mailingsettings.mailing_time }}</td>
                         <td>{{ mailing.mailingsettings.mailing_periodicity_display }}</td>
+                        <td>{{ mailing.mailingsettings.end_mailing_time }}</td>
                         <td>{{ mailing.mailingsettings.mailing_status }}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">

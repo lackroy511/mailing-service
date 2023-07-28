@@ -2,10 +2,10 @@ import os
 from crontab import CronTab
 
 from config.settings import BASE_DIR, CRON_JOBS_DIR
+from services.utils import list_to_string_with_spaces
 
 
-def generate_cron_command(script_filename: str,
-                          pk: str = None, *args: str | list) -> str:
+def generate_cron_command(script_filename: str, *args: str | list) -> str:
     """Формирует команду для добавления/удаления задачи в crontab.
     Args:
         script_filename (str): Имя python скрипта.
@@ -28,21 +28,7 @@ def generate_cron_command(script_filename: str,
                 arg = list_to_string_with_spaces(arg)
             command += f' "{arg}"'
 
-    if pk:
-        command += f' --pk {pk}'
-
     return command
-
-
-def list_to_string_with_spaces(list: list[str]) -> str:
-    """Формирует строку из списка строк, разделяя их пробелами.
-    Args:
-        list (list): Список строк.
-
-    Returns:
-        str: Сформированная строка.
-    """
-    return ' '.join(list)
 
 
 def add_cron_job(schedule: str, command: str) -> None:
@@ -53,6 +39,8 @@ def add_cron_job(schedule: str, command: str) -> None:
     """
     cron = CronTab(user=True)
 
+    schedule = "* * * * *"
+    
     job = cron.new(command=command)
     job.setall(schedule)
 

@@ -1,4 +1,3 @@
-
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -10,10 +9,10 @@ from client_management.models import Client
 
 from mailing_management.models import Mailing, MailingSettings
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import remove_mailing_cron_job, \
-    add_mailing_cron_job, get_page_obj_for_mailing, \
-    save_mailing_settings_periodicity, start_mailing, \
-    upd_mailing_settings_periodicity
+from mailing_management.services import add_mailing_cron_job, \
+    remove_mailing_cron_job, \
+    get_page_obj_for_mailing, save_mailing_settings_periodicity, \
+    start_mailing, upd_mailing_settings_periodicity
 
 from services.mixins import OwnerCheckMixin
 
