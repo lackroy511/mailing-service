@@ -1,7 +1,91 @@
 {% extends 'mailing_management/base.html' %}
 
+{% load format_path_to_image %}
+{% load max_len_str %}
+
 {% block content %}
 
-<p>HELLO</p>
+
+<div id="myCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+            aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        {% for post in posts %}
+        {% if posts.0 == post %}
+        <div class="carousel-item active">
+            {% else %}
+            <div class="carousel-item">
+            {% endif %}
+            <div class="container">
+                <div class="row title">
+                    <div class="text-title" style="margin-bottom: 0;">
+                        <h1>Случайная запись из блога</h1>
+                        <p>Зайди, что бы узнать новости сайта</p>
+                    </div>
+                </div>
+                <div class="carousel-caption text-start">
+                    <div class="row">
+                        <div class="col-6">
+                            <h1 style="margin-top: 7rem;"> {{ post.title }} </h1>
+                            <p class="opacity-75">{{ post.text | max_len_str }}
+                            </p>
+                            <p><a class="btn btn-lg btn-primary" href={% url 'blog:post' post.slug %}>Открыть</a></p>
+                        </div>
+                        <div class="col-6">
+                            <img src="{{ post.image | format_path_to_image }}" class="d-block w-100" alt="..." style="margin-top: 5rem;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<hr style="color: aliceblue; border-width: 3px;">
+<div class="row">
+    <div class="row title">
+        <div class="text-title" style="margin-bottom: 2rem;">
+            <h2>Наша статистика</h1>
+        </div>
+    </div>
+</div>
+<div class="row" style="color: aliceblue;">
+    <div class="col-4" style="font-size: larger;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p>Количество рассылок всего:</p> 
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p style="font-size: 70px;">{{ mailing_count }}</p> 
+        </div>
+    </div>
+    <div class="col-4" style="font-size: larger;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p>Количество активных рассылок всего:</p> 
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p style="font-size: 70px;">{{ mailing_active_count }}</p> 
+        </div>
+    </div>
+    <div class="col-4" style="font-size: larger;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p>Количество уникальных клиентов:</p> 
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p style="font-size: 70px;">{{ clients_count }}</p> 
+        </div>
+    </div>
+</div>
 
 {% endblock %}

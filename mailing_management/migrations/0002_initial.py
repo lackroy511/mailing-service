@@ -10,13 +10,18 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('mailing_management', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('client_management', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
+            model_name='mailinglogs',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='пользователь'),
+        ),
+        migrations.AddField(
+            model_name='mailing',
             name='user',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='пользователь'),
         ),

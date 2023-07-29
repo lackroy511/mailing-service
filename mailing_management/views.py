@@ -1,9 +1,12 @@
+import random
+
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, ListView
+from django.views.generic import CreateView, UpdateView, ListView, \
+    TemplateView
 from client_management.models import Client
 
 
@@ -13,21 +16,36 @@ from mailing_management.services import add_mailing_cron_job, \
     remove_mailing_cron_job, \
     get_page_obj_for_mailing, save_mailing_settings_periodicity, \
     start_mailing, upd_mailing_settings_periodicity
+from blog.models import Post
 
 from services.mixins import OwnerCheckMixin
 
 
 # Create your views here.
 
+class IndexTemplateView(TemplateView):
+    template_name = 'mailing_management/index.html'
 
-def index(request):
-    """
-    Главная страница
-    """
-    context = {
-        'is_active_main': 'active',
-    }
-    return render(request, 'mailing_management/index.html', context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        ids = Post.objects.values_list('id', flat=True)
+        ids = list(ids)
+
+        posts = []
+        for _ in range(0, 3):
+            id = random.choice(ids)
+            ids.remove(id)
+            posts.append(Post.objects.get(id=id))
+
+        context["posts"] = posts
+
+        context["mailing_count"] = Mailing.objects.count()
+        context["mailing_active_count"] = MailingSettings.objects.filter(
+            mailing_status='отправляется').count()
+        context["clients_count"] = Client.objects.count()
+
+        return context
 
 
 class MailingCreateView(CreateView):

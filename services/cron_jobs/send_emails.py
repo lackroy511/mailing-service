@@ -62,7 +62,7 @@ def set_status_sent(args: argparse, mailing: Mailing) -> Mailing:
     """
     if args.pk is not None:
         mailing = Mailing.objects.get(pk=args.pk)
-        mailing.mailingsettings.mailing_status = 'Отправляется'
+        mailing.mailingsettings.mailing_status = 'отправляется'
         mailing.mailingsettings.save()
 
     return mailing
