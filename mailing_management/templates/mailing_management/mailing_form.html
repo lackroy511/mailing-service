@@ -1,7 +1,7 @@
 {% extends 'mailing_management/base.html' %}
 
 {% block content %}
-
+{% if not is_manager %}
 <div class="row title">
     <div class="text-title">
         {% if object %}
@@ -40,7 +40,7 @@
 
     </div>
 </div>
-
+{% endif %}
 {% if mailing_list %}
 
 <div class="row title">
@@ -74,6 +74,7 @@
                         <td>{{ mailing.mailingsettings.end_mailing_time }}</td>
                         <td>{{ mailing.mailingsettings.mailing_status }}</td>
                         <td>
+                            {% if not is_manager %}
                             <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                                 <button type="button" class="btn btn-outline-primary">
                                     <a class="user-action" href={% url 'mailing:edit_mailing' mailing.pk %}>Ред.</a>
@@ -110,8 +111,19 @@
                                     data-bs-target="#staticBackdrop">
                                     <div class="user-action">Удалить</div>
                                 </button>
-
+                                
                             </div>
+                            {% else %}
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                                <button type="button" class="btn btn-outline-primary">
+                                    {% if mailing.mailingsettings.mailing_is_active %}
+                                        <a class="user-action" href={% url 'mailing:off' mailing.pk %}>Отключить</a>
+                                    {% else %}
+                                        <a class="user-action" href={% url 'mailing:on' mailing.pk %}>Включить</a>
+                                    {% endif %}
+                                </button>
+                            </div>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

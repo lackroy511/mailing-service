@@ -1,0 +1,59 @@
+{% extends 'mailing_management/base.html' %}
+
+{% block content %}
+
+<div class="row title">
+    <div class="text-title">
+        <h2>Список пользователей сервиса</h1>
+    </div>
+</div>
+
+<div class="row mb-0 table">
+    <div class="col table">
+        <div class="card table">
+            <table class="table mb-0 table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Имя</th>
+                        <th scope="col">Фамилия</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Активация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <th scope="row">{{ object.pk }}</th>
+                        {% if object.first_name  %}
+                        <td>{{ object.first_name }}</td>
+                        {% else %}
+                        <td>...</td>
+                        {% endif %}
+                        {% if object.last_name  %}
+                        <td>{{ object.last_name }}</td>
+                        {% else %}
+                        <td>...</td>
+                        {% endif %}
+                        <td>{{ object.email }}</td>
+
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                                <button type="button" class="btn btn-outline-primary">
+                                    {% if object.is_active %}
+                                        <a class="user-action" href={% url 'users:user_off' object.pk %}>Отключить</a>
+                                    {% else %}
+                                        <a class="user-action" href={% url 'users:user_on' object.pk %}>Включить</a>
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

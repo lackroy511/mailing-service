@@ -24,7 +24,9 @@
                 <img src="{{ object.image | format_path_to_image }}" alt="" style="max-width: 45rem;">
                 <p class="card-text" style="margin-top: 2rem;">{{ object.text }}</p>
                 <hr>
+                {% if perms.blog.view_post %}
                 <a href={% url 'blog:post' object.slug %} class="btn btn-primary" style="width: 10rem;">Открыть</a>
+                {% endif %}
             </div>
             <div class="card-footer text-body-secondary" style="background-color: #3D444D; color: rgb(212, 217, 221);">
                 Количество просмотров: {{ object.views_count }} / Дата публикации: {{ object.published_at }}

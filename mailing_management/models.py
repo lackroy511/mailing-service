@@ -62,8 +62,12 @@ class MailingSettings(models.Model):
         max_length=20, verbose_name='cтатус', default='Создана',
         choices=MAILING_STATUS_CHOICES,
     )
+    mailing_is_active = models.BooleanField(
+        default=True, verbose_name='Рассылка активна',
+    )
     mailing = models.OneToOneField(
-        Mailing, verbose_name='рассылка', on_delete=models.CASCADE)
+        Mailing, verbose_name='рассылка', on_delete=models.CASCADE,
+    )
 
     def __str__(self) -> str:
         return f'Время: {self.mailing_time}, \

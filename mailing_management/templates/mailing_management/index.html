@@ -26,7 +26,9 @@
                         <div class="col-6" style="justify-content: center; align-items: center;">
                             <h1> {{ post.title }} </h1>
                             <p class="opacity-75">{{ post.text | max_len_str }}</p>
+                            {% if perms.blog.view_post %}
                             <a class="btn btn-lg btn-primary" href={% url 'blog:post' post.slug %}>Открыть</a>
+                            {% endif %}
                         </div>
                         <div class="col-6">
                             <img src="{{ post.image | format_path_to_image }}" class="d-block w-100" alt="...">
@@ -65,7 +67,7 @@
     </div>
     <div class="col-4" style="font-size: larger;">
         <div style="display: flex; justify-content: center; align-items: center;">
-            <p>Количество активных рассылок всего:</p> 
+            <p>Рассылается прямо сейчас:</p> 
         </div>
         <div style="display: flex; justify-content: center; align-items: center;">
             <p style="font-size: 70px;">{{ mailing_active_count }}</p> 

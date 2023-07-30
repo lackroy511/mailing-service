@@ -1,24 +1,25 @@
-import random
-
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, \
     TemplateView
 from client_management.models import Client
 
-
 from mailing_management.models import Mailing, MailingSettings, MailingLogs
 from mailing_management.forms import MailingForm, MailingSettingsForm
 from mailing_management.services import add_mailing_cron_job, \
-    remove_mailing_cron_job, \
+    get_three_random_posts, is_manager_check, remove_mailing_cron_job, \
     get_page_obj_for_mailing, save_mailing_settings_periodicity, \
     start_mailing, upd_mailing_settings_periodicity
-from blog.models import Post
 
 from services.mixins import OwnerCheckMixin
+from users.models import User
 
 
 # Create your views here.
@@ -29,38 +30,33 @@ class IndexTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        ids = Post.objects.values_list('id', flat=True)
-        ids = list(ids)
-
-        posts = []
-        for _ in range(0, 3):
-            id = random.choice(ids)
-            ids.remove(id)
-            posts.append(Post.objects.get(id=id))
+        posts = get_three_random_posts()
 
         context["posts"] = posts
-
         context["mailing_count"] = Mailing.objects.count()
         context["mailing_active_count"] = MailingSettings.objects.filter(
             mailing_status='отправляется').count()
-        context["clients_count"] = Client.objects.count()
+        context["clients_count"] = User.objects.count()
+        context['is_manager'] = is_manager_check(self)
 
         return context
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(
+        PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     '''
     Управление рассылкой: Создание рассылки.
     '''
     model = Mailing
     form_class = MailingForm
+    permission_required = 'mailing_management.add_mailing'
     success_url = reverse_lazy('mailing_management:mailing_management')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["settings_form"] = MailingSettingsForm
-
         context['mailing_list'] = get_page_obj_for_mailing(self)
+        context['is_manager'] = is_manager_check(self)
 
         return context
 
@@ -76,7 +72,8 @@ class MailingCreateView(CreateView):
 
             save_mailing_settings_periodicity(mailing_settings)
 
-        add_mailing_cron_job(self, mailing, mailing_settings)
+        add_mailing_cron_job(self=self, mailing=mailing,
+                             mailing_settings=mailing_settings)
 
         email_list = [client.email for client in Client.objects.filter(
             user=self.request.user)]
@@ -86,12 +83,15 @@ class MailingCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingUpdateView(OwnerCheckMixin, UpdateView):
+class MailingUpdateView(
+        PermissionRequiredMixin,
+        LoginRequiredMixin, OwnerCheckMixin, UpdateView):
     '''
     Управление рассылкой: Создание рассылки.
     '''
     model = Mailing
     form_class = MailingForm
+    permission_required = 'mailing_management.change_mailing'
     success_url = reverse_lazy('mailing_management:mailing_management')
 
     def get_object(self, queryset=None):
@@ -102,6 +102,7 @@ class MailingUpdateView(OwnerCheckMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["settings_form"] = MailingSettingsForm
+        context['is_manager'] = is_manager_check(self)
 
         return context
 
@@ -115,11 +116,14 @@ class MailingUpdateView(OwnerCheckMixin, UpdateView):
             )
             upd_mailing_settings_periodicity(mailing_settings, settings_form)
 
-        add_mailing_cron_job(self, mailing, mailing_settings)
+        add_mailing_cron_job(self=self, mailing=mailing,
+                             mailing_settings=mailing_settings)
 
         return super().form_valid(form)
 
 
+@permission_required('mailing_management.delete_mailing')
+@login_required
 def del_mailing(request, pk):
     '''
     Управление рассылкой: Удаление рассылки.
@@ -139,11 +143,53 @@ def del_mailing(request, pk):
     return redirect('mailing_management:mailing_management')
 
 
-class LogListView(ListView):
+@permission_required('mailing_management.change_mailing')
+def mailing_off(request, pk):
+
+    if not request.user.groups.filter(name='manager').exists():
+        return redirect('mailing_management:index')
+
+    remove_mailing_cron_job(pk=pk, request=request)
+    try:
+        mailing = Mailing.objects.get(pk=pk)
+        mailing.mailingsettings.mailing_is_active = False
+        mailing.mailingsettings.save()
+    except ObjectDoesNotExist:
+        return redirect('mailing_management:mailing_management')
+
+    return redirect('mailing_management:mailing_management')
+
+
+@permission_required('mailing_management.change_mailing')
+def mailing_on(request, pk):
+    if not request.user.groups.filter(name='manager').exists():
+        return redirect('mailing_management:index')
+
+    try:
+        mailing = Mailing.objects.get(pk=pk)
+        mailing.mailingsettings.mailing_is_active = True
+        mailing.mailingsettings.save()
+    except ObjectDoesNotExist:
+        return redirect('mailing_management:mailing_management')
+
+    add_mailing_cron_job(mailing=mailing,
+                         mailing_settings=mailing.mailingsettings)
+
+    return redirect('mailing_management:mailing_management')
+
+
+class LogListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = MailingLogs
+    permission_required = 'mailing_management.view_mailinglogs'
 
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(user=self.request.user)
 
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_manager'] = is_manager_check(self)
+
+        return context

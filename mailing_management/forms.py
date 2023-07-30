@@ -40,3 +40,10 @@ class MailingSettingsForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+
+class MailingSettingsManagerForm(forms.ModelForm):
+
+    class Meta:
+        model = MailingSettings
+        fields = ('mailing_is_active',)

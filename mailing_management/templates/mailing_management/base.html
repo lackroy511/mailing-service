@@ -64,11 +64,20 @@
                             Менеджер рассылок
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            {% if perms.client_management.add_client %}
                             <li><a class="dropdown-item" href={% url 'client:client_management' %}>Управление
-                                    пользователями</a></li>
+                                    клиентами</a></li>
+                            {% endif %}
+                            {% if perms.mailing_management.add_mailing %}
                             <li><a class="dropdown-item" href={% url 'mailing:mailing_management' %}>Управление
                                     рассылками</a></li>
+                            {% endif %}
+                            {% if perms.mailing_management.view_mailinglogs %}
                             <li><a class="dropdown-item" href={% url 'mailing:logs' %}>Отчет о рассылках</a></li>
+                            {% endif %}
+                            {% if is_manager %}
+                            <li><a class="dropdown-item" href={% url 'users:users_list' %}>Управление пользователями</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                     {% endif %}

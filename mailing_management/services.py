@@ -1,9 +1,11 @@
 from datetime import datetime
-from django import forms
 import pytz
+import random
 
+from django import forms
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
+from blog.models import Post
 
 from client_management.models import Client
 from mailing_management.models import Mailing, MailingSettings
@@ -16,12 +18,34 @@ from services.utils import datetime_to_string
 SEND_EMAILS_SCRIPT_FILENAME = 'send_emails.py'
 
 
+def get_three_random_posts() -> list[Post]:
+    """Возвращает 3 случайных постов.
+    Returns:
+        list: Список постов.
+    """
+    ids = Post.objects.values_list('id', flat=True)
+    ids = list(ids)
+
+    posts = []
+    for _ in range(0, 3):
+        id = random.choice(ids)
+        ids.remove(id)
+        posts.append(Post.objects.get(id=id))
+
+    return posts
+
+
 def get_page_obj_for_mailing(self) -> Paginator:
     """Создает объект страницы.
     Returns:
         Paginator: объект страницы.
     """
-    mailing_list = Mailing.objects.filter(user=self.request.user)
+
+    if self.request.user.groups.filter(name='manager').exists():
+        mailing_list = Mailing.objects.all()
+    else:
+        mailing_list = Mailing.objects.filter(user=self.request.user)
+
     paginator = Paginator(mailing_list, 5)
     page_number = self.request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -29,8 +53,8 @@ def get_page_obj_for_mailing(self) -> Paginator:
     return page_obj
 
 
-def add_mailing_cron_job(self, mailing: Mailing,
-                         mailing_settings: MailingSettings) -> None:
+def add_mailing_cron_job(mailing: Mailing,
+                         mailing_settings: MailingSettings, self=None) -> None:
     """Добавить задачу crontab.
     Args:
         mailing (Mailing): Объект модели рассылки
@@ -40,7 +64,7 @@ def add_mailing_cron_job(self, mailing: Mailing,
     subject = mailing.massage_subject
     massage = mailing.massage_text
     email_list = [client.email for client in Client.objects.filter(
-        user=self.request.user)]
+        user=mailing.user)]
 
     command = generate_cron_command(
         SEND_EMAILS_SCRIPT_FILENAME, subject, massage, email_list,
@@ -72,7 +96,7 @@ def remove_mailing_cron_job(self=None, pk: int = None, request=None) -> None:
 
     if request:
         email_list = [client.email for client in Client.objects.filter(
-            user=request.user)]
+            user=mailing.user)]
     else:
         email_list = [client.email for client in Client.objects.filter(
             user=self.request.user)]
@@ -198,6 +222,13 @@ def start_mailing(self,
                   mailing: Mailing,
                   mailing_settings: MailingSettings,
                   email_list: list) -> None:
+    """Отправить рассылку.
+    Args:
+        self: Текущий объект.
+        mailing (Mailing): Объект модели рассылки.
+        mailing_settings (MailingSettings): Объект модели настроек рассылки.
+        email_list (list): Список email.
+    """
 
     timezone = pytz.timezone(TIME_ZONE)
     time_now = datetime.now(tz=timezone).time()
@@ -205,3 +236,14 @@ def start_mailing(self,
     if time_now > mailing_settings.mailing_time:
         send_mail(mailing.massage_subject, mailing.massage_text,
                   EMAIL_HOST_USER, email_list)
+
+
+def is_manager_check(self):
+    """Проверка наличия менеджера.
+    Returns:
+        self: Текущий объект.
+    """
+    if self.request.user.groups.filter(name='manager').exists():
+        return True
+
+    return False
