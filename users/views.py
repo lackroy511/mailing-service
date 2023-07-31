@@ -12,7 +12,6 @@ from django.contrib.auth.views import LoginView
 
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from services.mixins import OwnerCheckMixin
 
 from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm
 from users.models import User
@@ -46,6 +45,18 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
 
+def activate_user(request, token):
+
+    uid = get_id_from_token(token)
+
+    try:
+        user_activation(uid)
+    except (TypeError, ValueError, KeyError, User.DoesNotExist):
+        return redirect('users:activation_failed')
+
+    return redirect('users:activation_success')
+
+
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     success_url = reverse_lazy('users:profile')
@@ -72,18 +83,6 @@ class UserLoginView(LoginView):
     }
 
 
-def activate_user(request, token):
-
-    uid = get_id_from_token(token)
-
-    try:
-        user_activation(uid)
-    except (TypeError, ValueError, KeyError, User.DoesNotExist):
-        return redirect('users:activation_failed')
-
-    return redirect('users:activation_success')
-
-
 class ActivationSuccess(TemplateView):
     template_name = 'users/activation_success.html'
 
@@ -103,6 +102,6 @@ def user_on(request, pk):
 @permission_required('users.change_user')
 def user_off(request, pk):
     user = get_object_or_404(User, pk=pk)
-    user.is_active = True
+    user.is_active = False
     user.save()
     return redirect('users:users_list')

@@ -9,14 +9,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, \
     TemplateView
-from client_management.models import Client
 
 from mailing_management.models import Mailing, MailingSettings, MailingLogs
 from mailing_management.forms import MailingForm, MailingSettingsForm
-from mailing_management.services import add_mailing_cron_job, \
+from mailing_management.services import activate_mailing, \
     get_three_random_posts, is_manager_check, remove_mailing_cron_job, \
     get_page_obj_for_mailing, save_mailing_settings_periodicity, \
-    start_mailing, upd_mailing_settings_periodicity
+    start_mailing, upd_mailing_settings_periodicity, get_email_list_for_user, \
+    deactivate_mailing, add_mailing_cron_job
 
 from services.mixins import OwnerCheckMixin
 from users.models import User
@@ -44,9 +44,6 @@ class IndexTemplateView(TemplateView):
 
 class MailingCreateView(
         PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    '''
-    Управление рассылкой: Создание рассылки.
-    '''
     model = Mailing
     form_class = MailingForm
     permission_required = 'mailing_management.add_mailing'
@@ -75,8 +72,7 @@ class MailingCreateView(
         add_mailing_cron_job(self=self, mailing=mailing,
                              mailing_settings=mailing_settings)
 
-        email_list = [client.email for client in Client.objects.filter(
-            user=self.request.user)]
+        email_list = get_email_list_for_user(mailing)
 
         start_mailing(self, mailing, mailing_settings, email_list)
 
@@ -86,9 +82,6 @@ class MailingCreateView(
 class MailingUpdateView(
         PermissionRequiredMixin,
         LoginRequiredMixin, OwnerCheckMixin, UpdateView):
-    '''
-    Управление рассылкой: Создание рассылки.
-    '''
     model = Mailing
     form_class = MailingForm
     permission_required = 'mailing_management.change_mailing'
@@ -125,18 +118,15 @@ class MailingUpdateView(
 @permission_required('mailing_management.delete_mailing')
 @login_required
 def del_mailing(request, pk):
-    '''
-    Управление рассылкой: Удаление рассылки.
-    '''
-    remove_mailing_cron_job(pk=pk, request=request)
-
     try:
-        mailing = Mailing.objects.get(pk=pk)
 
+        mailing = Mailing.objects.get(pk=pk)
         if mailing.user != request.user:
             return redirect('mailing_management:index')
 
+        remove_mailing_cron_job(pk=pk, request=request)
         mailing.delete()
+
     except ObjectDoesNotExist:
         return redirect('mailing_management:mailing_management')
 
@@ -148,12 +138,10 @@ def mailing_off(request, pk):
 
     if not request.user.groups.filter(name='manager').exists():
         return redirect('mailing_management:index')
-
     remove_mailing_cron_job(pk=pk, request=request)
+
     try:
-        mailing = Mailing.objects.get(pk=pk)
-        mailing.mailingsettings.mailing_is_active = False
-        mailing.mailingsettings.save()
+        deactivate_mailing(pk)
     except ObjectDoesNotExist:
         return redirect('mailing_management:mailing_management')
 
@@ -162,13 +150,12 @@ def mailing_off(request, pk):
 
 @permission_required('mailing_management.change_mailing')
 def mailing_on(request, pk):
+
     if not request.user.groups.filter(name='manager').exists():
         return redirect('mailing_management:index')
 
     try:
-        mailing = Mailing.objects.get(pk=pk)
-        mailing.mailingsettings.mailing_is_active = True
-        mailing.mailingsettings.save()
+        mailing = activate_mailing(pk)
     except ObjectDoesNotExist:
         return redirect('mailing_management:mailing_management')
 

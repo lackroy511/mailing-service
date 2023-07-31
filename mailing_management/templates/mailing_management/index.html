@@ -5,7 +5,7 @@
 
 {% block content %}
 
-
+{% if posts %}
 <div id="myCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
@@ -48,6 +48,7 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+{% endif %}
 <hr style="color: aliceblue; border-width: 3px;">
 <div class="row">
     <div class="row title">

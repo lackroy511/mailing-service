@@ -47,12 +47,13 @@ def delete_client(request, pk):
     Управление рассылкой: Удаление клиента.
     '''
     try:
+
         client = Client.objects.get(pk=pk)
 
         if client.user != request.user:
             return redirect('mailing_management:index')
-
         client.delete()
+
     except ObjectDoesNotExist:
         return redirect('client:client_management')
 

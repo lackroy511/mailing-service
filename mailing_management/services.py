@@ -25,12 +25,15 @@ def get_three_random_posts() -> list[Post]:
     """
     ids = Post.objects.values_list('id', flat=True)
     ids = list(ids)
-
     posts = []
-    for _ in range(0, 3):
-        id = random.choice(ids)
-        ids.remove(id)
-        posts.append(Post.objects.get(id=id))
+
+    try:
+        for _ in range(0, 3):
+            id = random.choice(ids)
+            ids.remove(id)
+            posts.append(Post.objects.get(id=id))
+    except IndexError:
+        return posts
 
     return posts
 
@@ -144,6 +147,18 @@ def set_end_mailing_time_for_cron_command(command: str,
     return command + f' --end_mailing_time "{dt_str}"'
 
 
+def get_email_list_for_user(mailing: Mailing) -> list[str]:
+    """Сформировать список адресов для рассылки.
+    Args:
+        mailing (Mailing): Объект модели рассылки
+
+    Returns:
+        list[str]: список адресов.
+    """
+    return [client.email for client in Client.objects.filter(
+            user=mailing.user)]
+
+
 def save_mailing_settings_periodicity(
         mailing_settings: MailingSettings) -> None:
     """Сохранить настройки расписания для рассылки.
@@ -247,3 +262,25 @@ def is_manager_check(self):
         return True
 
     return False
+
+
+def activate_mailing(pk: str) -> None:
+    """ Установить активность рассылки.
+    Args:
+        pk (str): ID рассылки.
+    """
+    mailing = Mailing.objects.get(pk=pk)
+    mailing.mailingsettings.mailing_is_active = True
+    mailing.mailingsettings.save()
+
+    return mailing
+
+
+def deactivate_mailing(pk: str) -> None:
+    """ Установить активность рассылки.
+    Args:
+        pk (str): ID рассылки.
+    """
+    mailing = Mailing.objects.get(pk=pk)
+    mailing.mailingsettings.mailing_is_active = False
+    mailing.mailingsettings.save()
