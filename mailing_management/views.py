@@ -18,13 +18,13 @@ from mailing_management.services import activate_mailing, \
     start_mailing, upd_mailing_settings_periodicity, get_email_list_for_user, \
     deactivate_mailing, add_mailing_cron_job
 
-from services.mixins import OwnerCheckMixin
+from services.mixins import CacheViewMixin, OwnerCheckMixin
 from users.models import User
 
 
 # Create your views here.
 
-class IndexTemplateView(TemplateView):
+class IndexTemplateView(CacheViewMixin, TemplateView):
     template_name = 'mailing_management/index.html'
 
     def get_context_data(self, **kwargs):
