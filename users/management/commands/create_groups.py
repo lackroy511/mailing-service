@@ -16,6 +16,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_mailingsettings'),
             Permission.objects.get(codename='view_user'),
             Permission.objects.get(codename='change_user'),
+            Permission.objects.get(codename='view_post'),
         ]
         group.permissions.set(permissions)
 
