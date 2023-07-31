@@ -9,11 +9,13 @@ def get_cached_posts():
 
     if CACHE_ENABLED:
         key = 'blog_posts_list'
-        cached_posts = cache.get(key)
-        if cached_posts is None:
+        queryset = cache.get(key)
+        if queryset is None:
             queryset = Post.objects.all()
             cache.set(key, queryset, 30)
     else:
         queryset = Post.objects.all()
+
+    print(queryset)
 
     return queryset
