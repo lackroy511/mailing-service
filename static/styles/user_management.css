@@ -1,8 +1,18 @@
+.row.title {
+    width: 100%;
+}
+
+.row.main {
+    width: 100%;
+}
+
 .text-title {
     text-align: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
     color: rgb(207, 215, 222);
+    padding-right: 0;
+    margin-right: 0;
 }
 
 .card.user {
