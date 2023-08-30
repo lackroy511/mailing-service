@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "coursework-6"
+name = "mailing-service"
 version = "0.1.0"
 description = ""
 authors = ["RomanBogdanov <lackroy5111@gmail.com>"]
 readme = "README.md"
-packages = [{include = "coursework_6"}]
+packages = [{include = "mailing-service"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
